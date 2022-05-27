@@ -1,0 +1,19 @@
+controller:
+  control_plane:
+    class: protocol.controller.Controller
+router:
+  data_plane: ./protocol/p4/q-int-node.json
+  control_plane:
+    class: protocol.agent.Agent
+repeater:
+  data_plane: ./protocol/p4/q-int-node.json
+  control_plane:
+    class: protocol.agent.Agent
+heralding_station:
+  data_plane: ./protocol/p4/heralding_station.json
+  control_plane:
+    class: protocol.agent.Agent
+host:
+  data_plane: ./protocol/p4/q-end-node.json
+  control_plane:
+    class: protocol.host.EntangleAndMeasure

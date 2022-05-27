@@ -1,0 +1,4 @@
+netsquid-netrunner
+netsquid-p4-v1quantum
+netsquid-physlayer
+networkx

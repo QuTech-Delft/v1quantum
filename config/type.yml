@@ -1,0 +1,7 @@
+controller: netsquid_netrunner.components.controller.Controller
+router: components.qnode.QNode
+repeater: components.qnode.QNode
+heralding_station: components.heralding_station.HeraldingStation
+host: components.qnode.QNode
+classical_connection: netsquid_netrunner.components.connections.ClassicalConnection
+quantum_connection: netsquid_netrunner.components.connections.QuantumConnection

@@ -1,0 +1,13 @@
+netsquid_random_state_seed: random
+
+matrix:
+  requests_per_host: 3
+  parameters:
+    num_pairs:
+      type: int
+      distribution: normal
+      mean: 50
+      stdev: 5
+  start_time:
+    distribution: exponential
+    interval: 100_000_000

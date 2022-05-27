@@ -1,0 +1,1870 @@
+{
+  "header_types" : [
+    {
+      "name" : "scalars_0",
+      "id" : 0,
+      "fields" : [
+        ["tmp_0", 1, false],
+        ["tmp_1", 32, false],
+        ["tmp_2", 32, false],
+        ["tmp_3", 32, false],
+        ["tmp_4", 32, false],
+        ["tmp_5", 1, false],
+        ["tmp", 1, false],
+        ["_padding_2", 5, false]
+      ]
+    },
+    {
+      "name" : "bsm_grp_state_t",
+      "id" : 1,
+      "fields" : [
+        ["outcome_seq", 16, false],
+        ["pair_seq", 16, false]
+      ]
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 2,
+      "fields" : [
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["egress_port", 9, false],
+        ["instance_type", 32, false],
+        ["packet_length", 32, false],
+        ["enq_timestamp", 48, false],
+        ["enq_qdepth", 19, false],
+        ["deq_timedelta", 48, false],
+        ["deq_qdepth", 19, false],
+        ["ingress_global_timestamp", 64, false],
+        ["egress_global_timestamp", 64, false],
+        ["mcast_grp", 16, false],
+        ["egress_rid", 16, false],
+        ["checksum_error", 1, false],
+        ["parser_error", 32, false],
+        ["priority", 3, false],
+        ["_padding", 3, false]
+      ]
+    },
+    {
+      "name" : "xconnect_metadata",
+      "id" : 3,
+      "fields" : [
+        ["pathway", 32, false],
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["bsm_grp", 16, false],
+        ["bsm_info", 16, false],
+        ["_padding_0", 6, false]
+      ]
+    },
+    {
+      "name" : "qdevice_metadata",
+      "id" : 4,
+      "fields" : [
+        ["event_type", 32, false],
+        ["event_timestamp", 64, false],
+        ["operation", 32, false],
+        ["release_qubit", 9, false],
+        ["swap_bsm_id", 16, false],
+        ["swap_qubit_0", 9, false],
+        ["swap_qubit_1", 9, false],
+        ["bsm_id", 16, false],
+        ["bsm_success", 1, 0],
+        ["bsm_bell_index", 2, false],
+        ["_padding_1", 2, false]
+      ]
+    },
+    {
+      "name" : "ethernet_t",
+      "id" : 5,
+      "fields" : [
+        ["dst_addr", 48, false],
+        ["src_addr", 48, false],
+        ["ethertype", 16, false]
+      ]
+    },
+    {
+      "name" : "egp_t",
+      "id" : 6,
+      "fields" : [
+        ["link_label", 16, false],
+        ["pair_seq", 16, false],
+        ["bell_index", 2, false],
+        ["_reserved", 30, false]
+      ]
+    },
+    {
+      "name" : "bsm_info_t",
+      "id" : 7,
+      "fields" : [
+        ["bsm_id", 16, false],
+        ["outcome_seq", 16, false],
+        ["success", 1, false],
+        ["bell_index", 2, false],
+        ["_reserved", 29, false]
+      ]
+    }
+  ],
+  "headers" : [
+    {
+      "name" : "bsm_grp_state_0",
+      "id" : 0,
+      "header_type" : "bsm_grp_state_t",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "scalars",
+      "id" : 1,
+      "header_type" : "scalars_0",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 2,
+      "header_type" : "standard_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "qdevice_metadata",
+      "id" : 3,
+      "header_type" : "qdevice_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "xconnect_metadata",
+      "id" : 4,
+      "header_type" : "xconnect_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ethernet",
+      "id" : 5,
+      "header_type" : "ethernet_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "egp",
+      "id" : 6,
+      "header_type" : "egp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "bsm_info",
+      "id" : 7,
+      "header_type" : "bsm_info_t",
+      "metadata" : false,
+      "pi_omit" : true
+    }
+  ],
+  "header_stacks" : [],
+  "header_union_types" : [],
+  "header_unions" : [],
+  "header_union_stacks" : [],
+  "field_lists" : [],
+  "errors" : [
+    ["NoError", 0],
+    ["PacketTooShort", 1],
+    ["NoMatch", 2],
+    ["StackOutOfBounds", 3],
+    ["HeaderTooShort", 4],
+    ["ParserTimeout", 5],
+    ["ParserInvalidArgument", 6]
+  ],
+  "enums" : [
+    {
+      "name" : "CloneType",
+      "entries" : [
+        ["E2E", 2],
+        ["I2E", 0],
+        ["Q2E", 1]
+      ]
+    },
+    {
+      "name" : "HashAlgorithm",
+      "entries" : [
+        ["crc16", 2],
+        ["crc16_custom", 3],
+        ["crc32", 0],
+        ["crc32_custom", 1],
+        ["csum16", 6],
+        ["identity", 5],
+        ["random", 4],
+        ["xor16", 7]
+      ]
+    },
+    {
+      "name" : "MeterType",
+      "entries" : [
+        ["bytes", 1],
+        ["packets", 0]
+      ]
+    },
+    {
+      "name" : "CounterType",
+      "entries" : [
+        ["bytes", 1],
+        ["packets", 0],
+        ["packets_and_bytes", 2]
+      ]
+    },
+    {
+      "name" : "PathWay",
+      "entries" : [
+        ["cnetwork", 0],
+        ["qdevice", 1]
+      ]
+    },
+    {
+      "name" : "QDeviceOperation",
+      "entries" : [
+        ["none", 0],
+        ["release", 2],
+        ["swap", 1]
+      ]
+    },
+    {
+      "name" : "QDeviceEventType",
+      "entries" : [
+        ["cnetwork", 2],
+        ["heralding_bsm_outcome", 0],
+        ["swap_bsm_outcome", 1]
+      ]
+    }
+  ],
+  "parsers" : [
+    {
+      "name" : "parser",
+      "id" : 0,
+      "init_state" : "start",
+      "parse_states" : [
+        {
+          "name" : "start",
+          "id" : 0,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ethernet"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : []
+        }
+      ]
+    }
+  ],
+  "parse_vsets" : [],
+  "deparsers" : [
+    {
+      "name" : "deparser",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 224,
+        "column" : 8,
+        "source_fragment" : "xDeparser"
+      },
+      "order" : ["ethernet", "egp", "bsm_info"],
+      "primitives" : []
+    }
+  ],
+  "meter_arrays" : [],
+  "counter_arrays" : [],
+  "register_arrays" : [
+    {
+      "name" : "xQDevice.r_bsm_grp_state_outcome_seq",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 101,
+        "column" : 37,
+        "source_fragment" : "r_bsm_grp_state_outcome_seq"
+      },
+      "size" : 32,
+      "bitwidth" : 16
+    },
+    {
+      "name" : "xQDevice.r_bsm_grp_state_pair_seq",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 102,
+        "column" : 37,
+        "source_fragment" : "r_bsm_grp_state_pair_seq"
+      },
+      "size" : 32,
+      "bitwidth" : 16
+    }
+  ],
+  "calculations" : [],
+  "learn_lists" : [],
+  "actions" : [
+    {
+      "name" : "xIngress.drop",
+      "id" : 0,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 65,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xIngress.forward",
+      "id" : 1,
+      "runtime_data" : [
+        {
+          "name" : "port",
+          "bitwidth" : 9
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 69,
+            "column" : 8,
+            "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station85",
+      "id" : 2,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["ethernet", "$valid$"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 85,
+            "column" : 15,
+            "source_fragment" : "hdr.ethernet.isValid()"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp_0"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 85,
+            "column" : 8,
+            "source_fragment" : "assert(hdr.ethernet.isValid())"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "NoAction",
+      "id" : 3,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "xQDevice.bsm_grp_state_read",
+      "id" : 4,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_1"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["qdevice_metadata", "bsm_id"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 144,
+            "column" : 27,
+            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+          }
+        },
+        {
+          "op" : "register_read",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "outcome_seq"]
+            },
+            {
+              "type" : "register_array",
+              "value" : "xQDevice.r_bsm_grp_state_outcome_seq"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_1"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 105,
+            "column" : 8,
+            "source_fragment" : "r_bsm_grp_state_outcome_seq.read(bsm_grp_state.outcome_seq, index)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_2"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["qdevice_metadata", "bsm_id"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 144,
+            "column" : 27,
+            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+          }
+        },
+        {
+          "op" : "register_read",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "pair_seq"]
+            },
+            {
+              "type" : "register_array",
+              "value" : "xQDevice.r_bsm_grp_state_pair_seq"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_2"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 106,
+            "column" : 8,
+            "source_fragment" : "r_bsm_grp_state_pair_seq.read(bsm_grp_state.pair_seq, index)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.bsm_grp_state_write",
+      "id" : 5,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_3"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["qdevice_metadata", "bsm_id"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 164,
+            "column" : 28,
+            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "xQDevice.r_bsm_grp_state_outcome_seq"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_3"]
+            },
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "outcome_seq"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 110,
+            "column" : 8,
+            "source_fragment" : "r_bsm_grp_state_outcome_seq.write(index, bsm_grp_state.outcome_seq)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_4"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["qdevice_metadata", "bsm_id"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 164,
+            "column" : 28,
+            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "xQDevice.r_bsm_grp_state_pair_seq"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_4"]
+            },
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "pair_seq"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 111,
+            "column" : 8,
+            "source_fragment" : "r_bsm_grp_state_pair_seq.write(index, bsm_grp_state.pair_seq)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.bsm_to_egp",
+      "id" : 6,
+      "runtime_data" : [
+        {
+          "name" : "link_label",
+          "bitwidth" : 16
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "egp"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 116,
+            "column" : 8,
+            "source_fragment" : "hdr.egp.setValid()"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["egp", "link_label"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 117,
+            "column" : 8,
+            "source_fragment" : "hdr.egp.link_label = link_label"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["egp", "pair_seq"]
+            },
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "pair_seq"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 118,
+            "column" : 8,
+            "source_fragment" : "hdr.egp.pair_seq = bsm_grp_state.pair_seq"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["egp", "bell_index"]
+            },
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "bsm_bell_index"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 119,
+            "column" : 8,
+            "source_fragment" : "hdr.egp.bell_index = qdevice_metadata.bsm_bell_index"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "pair_seq"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["bsm_grp_state_0", "pair_seq"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x0001"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 122,
+            "column" : 8,
+            "source_fragment" : "bsm_grp_state.pair_seq = bsm_grp_state.pair_seq + 1"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "bsm_grp"]
+            },
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "bsm_id"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 125,
+            "column" : 8,
+            "source_fragment" : "xconnect_metadata.bsm_grp = qdevice_metadata.bsm_id"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station141",
+      "id" : 7,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_5"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "==",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["qdevice_metadata", "event_type"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x00000000"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 141,
+            "column" : 15,
+            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp_5"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 141,
+            "column" : 8,
+            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station147",
+      "id" : 8,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "ethernet"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 147,
+            "column" : 8,
+            "source_fragment" : "hdr.ethernet.setValid()"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "ethertype"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x4401"
+            }
+          ],
+          "source_info" : {
+            "filename" : "headers.p4",
+            "line" : 4,
+            "column" : 30,
+            "source_fragment" : "0x4401; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station156",
+      "id" : 9,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x01"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 32,
+            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station156_0",
+      "id" : 10,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 32,
+            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station154",
+      "id" : 11,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_info", "bsm_id"]
+            },
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "bsm_id"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 154,
+            "column" : 8,
+            "source_fragment" : "hdr.bsm_info.bsm_id = qdevice_metadata.bsm_id"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_info", "outcome_seq"]
+            },
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "outcome_seq"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 155,
+            "column" : 8,
+            "source_fragment" : "hdr.bsm_info.outcome_seq = bsm_grp_state.outcome_seq"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station156_1",
+      "id" : 12,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_info", "success"]
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 8,
+            "source_fragment" : "hdr.bsm_info.success ="
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_info", "bell_index"]
+            },
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "bsm_bell_index"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 157,
+            "column" : 8,
+            "source_fragment" : "hdr.bsm_info.bell_index = qdevice_metadata.bsm_bell_index"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0000"
+            }
+          ],
+          "source_info" : {
+            "filename" : "headers.p4",
+            "line" : 1,
+            "column" : 24,
+            "source_fragment" : "0x000; ..."
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["bsm_grp_state_0", "outcome_seq"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["bsm_grp_state_0", "outcome_seq"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x0001"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 161,
+            "column" : 8,
+            "source_fragment" : "bsm_grp_state.outcome_seq = bsm_grp_state.outcome_seq + 1"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xEgress.drop",
+      "id" : 13,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 179,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xEgress.drop",
+      "id" : 14,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 179,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xEgress.ethernet_address",
+      "id" : 15,
+      "runtime_data" : [
+        {
+          "name" : "dst_addr",
+          "bitwidth" : 48
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "dst_addr"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 183,
+            "column" : 8,
+            "source_fragment" : "hdr.ethernet.dst_addr = dst_addr"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "heralding_station204",
+      "id" : 16,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "bsm_info"
+            }
+          ],
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 204,
+            "column" : 16,
+            "source_fragment" : "hdr.bsm_info.setValid()"
+          }
+        }
+      ]
+    }
+  ],
+  "pipelines" : [
+    {
+      "name" : "ingress",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 58,
+        "column" : 8,
+        "source_fragment" : "xIngress"
+      },
+      "init_table" : "tbl_heralding_station85",
+      "tables" : [
+        {
+          "name" : "tbl_heralding_station85",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 85,
+            "column" : 8,
+            "source_fragment" : "assert(hdr.ethernet.isValid())"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [2],
+          "actions" : ["heralding_station85"],
+          "base_default_next" : "xIngress.ethernet_tbl",
+          "next_tables" : {
+            "heralding_station85" : "xIngress.ethernet_tbl"
+          },
+          "default_entry" : {
+            "action_id" : 2,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "xIngress.ethernet_tbl",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 72,
+            "column" : 10,
+            "source_fragment" : "ethernet_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.ethernet.dst_addr",
+              "target" : ["ethernet", "dst_addr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [1, 0],
+          "actions" : ["xIngress.forward", "xIngress.drop"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xIngress.forward" : null,
+            "xIngress.drop" : null
+          },
+          "default_entry" : {
+            "action_id" : 0,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : []
+    },
+    {
+      "name" : "qdevice",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 94,
+        "column" : 8,
+        "source_fragment" : "xQDevice"
+      },
+      "init_table" : "tbl_heralding_station141",
+      "tables" : [
+        {
+          "name" : "tbl_heralding_station141",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 141,
+            "column" : 8,
+            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [7],
+          "actions" : ["heralding_station141"],
+          "base_default_next" : "tbl_bsm_grp_state_read",
+          "next_tables" : {
+            "heralding_station141" : "tbl_bsm_grp_state_read"
+          },
+          "default_entry" : {
+            "action_id" : 7,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_bsm_grp_state_read",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 144,
+            "column" : 8,
+            "source_fragment" : "bsm_grp_state_read((bit<32>)qdevice_metadata.bsm_id)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [4],
+          "actions" : ["xQDevice.bsm_grp_state_read"],
+          "base_default_next" : "tbl_heralding_station147",
+          "next_tables" : {
+            "xQDevice.bsm_grp_state_read" : "tbl_heralding_station147"
+          },
+          "default_entry" : {
+            "action_id" : 4,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_heralding_station147",
+          "id" : 4,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 147,
+            "column" : 8,
+            "source_fragment" : "hdr.ethernet.setValid(); ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [8],
+          "actions" : ["heralding_station147"],
+          "base_default_next" : "xQDevice.bsm_tbl",
+          "next_tables" : {
+            "heralding_station147" : "xQDevice.bsm_tbl"
+          },
+          "default_entry" : {
+            "action_id" : 8,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "xQDevice.bsm_tbl",
+          "id" : 5,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 128,
+            "column" : 10,
+            "source_fragment" : "bsm_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "qdevice_metadata.bsm_id",
+              "target" : ["qdevice_metadata", "bsm_id"],
+              "mask" : null
+            },
+            {
+              "match_type" : "exact",
+              "name" : "qdevice_metadata.bsm_success",
+              "target" : ["qdevice_metadata", "bsm_success"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 64,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [6, 3],
+          "actions" : ["xQDevice.bsm_to_egp", "NoAction"],
+          "base_default_next" : "tbl_heralding_station154",
+          "next_tables" : {
+            "xQDevice.bsm_to_egp" : "tbl_heralding_station154",
+            "NoAction" : "tbl_heralding_station154"
+          },
+          "default_entry" : {
+            "action_id" : 3,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        },
+        {
+          "name" : "tbl_heralding_station154",
+          "id" : 6,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 154,
+            "column" : 28,
+            "source_fragment" : "= qdevice_metadata.bsm_id; ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [11],
+          "actions" : ["heralding_station154"],
+          "base_default_next" : "node_11",
+          "next_tables" : {
+            "heralding_station154" : "node_11"
+          },
+          "default_entry" : {
+            "action_id" : 11,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_heralding_station156",
+          "id" : 7,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 32,
+            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [9],
+          "actions" : ["heralding_station156"],
+          "base_default_next" : "tbl_heralding_station156_1",
+          "next_tables" : {
+            "heralding_station156" : "tbl_heralding_station156_1"
+          },
+          "default_entry" : {
+            "action_id" : 9,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_heralding_station156_0",
+          "id" : 8,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 32,
+            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [10],
+          "actions" : ["heralding_station156_0"],
+          "base_default_next" : "tbl_heralding_station156_1",
+          "next_tables" : {
+            "heralding_station156_0" : "tbl_heralding_station156_1"
+          },
+          "default_entry" : {
+            "action_id" : 10,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_heralding_station156_1",
+          "id" : 9,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 29,
+            "source_fragment" : "= (qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0); ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [12],
+          "actions" : ["heralding_station156_1"],
+          "base_default_next" : "tbl_bsm_grp_state_write",
+          "next_tables" : {
+            "heralding_station156_1" : "tbl_bsm_grp_state_write"
+          },
+          "default_entry" : {
+            "action_id" : 12,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_bsm_grp_state_write",
+          "id" : 10,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 164,
+            "column" : 8,
+            "source_fragment" : "bsm_grp_state_write((bit<32>)qdevice_metadata.bsm_id)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [5],
+          "actions" : ["xQDevice.bsm_grp_state_write"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xQDevice.bsm_grp_state_write" : null
+          },
+          "default_entry" : {
+            "action_id" : 5,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_11",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 156,
+            "column" : 32,
+            "source_fragment" : "qdevice_metadata.bsm_success"
+          },
+          "expression" : {
+            "type" : "field",
+            "value" : ["qdevice_metadata", "bsm_success"]
+          },
+          "true_next" : "tbl_heralding_station156",
+          "false_next" : "tbl_heralding_station156_0"
+        }
+      ]
+    },
+    {
+      "name" : "egress",
+      "id" : 2,
+      "source_info" : {
+        "filename" : "heralding_station.p4",
+        "line" : 172,
+        "column" : 8,
+        "source_fragment" : "xEgress"
+      },
+      "init_table" : "node_18",
+      "tables" : [
+        {
+          "name" : "xEgress.ethernet_tbl",
+          "id" : 11,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 186,
+            "column" : 10,
+            "source_fragment" : "ethernet_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "standard_metadata.egress_port",
+              "target" : ["standard_metadata", "egress_port"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [15, 13],
+          "actions" : ["xEgress.ethernet_address", "xEgress.drop"],
+          "base_default_next" : "node_20",
+          "next_tables" : {
+            "xEgress.ethernet_address" : "node_20",
+            "xEgress.drop" : "node_20"
+          },
+          "default_entry" : {
+            "action_id" : 13,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          },
+          "entries" : [
+            {
+              "source_info" : {
+                "filename" : "heralding_station.p4",
+                "line" : 196,
+                "column" : 12,
+                "source_fragment" : "0: ethernet_address(0x000000000000)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0000"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 15,
+                "action_data" : ["0x0"]
+              },
+              "priority" : 1
+            }
+          ]
+        },
+        {
+          "name" : "tbl_heralding_station204",
+          "id" : 12,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 204,
+            "column" : 16,
+            "source_fragment" : "hdr.bsm_info.setValid()"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [16],
+          "actions" : ["heralding_station204"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "heralding_station204" : null
+          },
+          "default_entry" : {
+            "action_id" : 16,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_drop",
+          "id" : 13,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 207,
+            "column" : 12,
+            "source_fragment" : "drop()"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [14],
+          "actions" : ["xEgress.drop"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xEgress.drop" : null
+          },
+          "default_entry" : {
+            "action_id" : 14,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_18",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 201,
+            "column" : 12,
+            "source_fragment" : "hdr.ethernet.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["ethernet", "$valid$"]
+              }
+            }
+          },
+          "true_next" : "xEgress.ethernet_tbl",
+          "false_next" : "tbl_drop"
+        },
+        {
+          "name" : "node_20",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "heralding_station.p4",
+            "line" : 203,
+            "column" : 16,
+            "source_fragment" : "standard_metadata.egress_port == PORT_CPU"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "==",
+              "left" : {
+                "type" : "field",
+                "value" : ["standard_metadata", "egress_port"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "0x0000"
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "tbl_heralding_station204"
+        }
+      ]
+    }
+  ],
+  "checksums" : [],
+  "force_arith" : [],
+  "extern_instances" : [],
+  "field_aliases" : [
+    [
+      "queueing_metadata.enq_timestamp",
+      ["standard_metadata", "enq_timestamp"]
+    ],
+    [
+      "queueing_metadata.enq_qdepth",
+      ["standard_metadata", "enq_qdepth"]
+    ],
+    [
+      "queueing_metadata.deq_timedelta",
+      ["standard_metadata", "deq_timedelta"]
+    ],
+    [
+      "queueing_metadata.deq_qdepth",
+      ["standard_metadata", "deq_qdepth"]
+    ],
+    [
+      "intrinsic_metadata.ingress_global_timestamp",
+      ["standard_metadata", "ingress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.egress_global_timestamp",
+      ["standard_metadata", "egress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.mcast_grp",
+      ["standard_metadata", "mcast_grp"]
+    ],
+    [
+      "intrinsic_metadata.egress_rid",
+      ["standard_metadata", "egress_rid"]
+    ],
+    [
+      "intrinsic_metadata.priority",
+      ["standard_metadata", "priority"]
+    ]
+  ],
+  "program" : "heralding_station.p4",
+  "__meta__" : {
+    "version" : [2, 23],
+    "compiler" : "https://github.com/p4lang/p4c"
+  }
+}

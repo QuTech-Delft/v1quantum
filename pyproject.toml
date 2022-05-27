@@ -1,0 +1,9 @@
+[tool.pyright]
+exclude = [
+  "**/__pycache__"
+]
+
+typeCheckingMode = "off"
+
+pythonVersion = "3.8"
+pythonPlatform = "Linux"

@@ -1,0 +1,1470 @@
+{
+  "header_types" : [
+    {
+      "name" : "scalars_0",
+      "id" : 0,
+      "fields" : [
+        ["tmp", 1, false],
+        ["tmp_0", 1, false],
+        ["tmp_1", 1, false],
+        ["tmp_2", 1, false],
+        ["_padding_2", 4, false]
+      ]
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "fields" : [
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["egress_port", 9, false],
+        ["instance_type", 32, false],
+        ["packet_length", 32, false],
+        ["enq_timestamp", 48, false],
+        ["enq_qdepth", 19, false],
+        ["deq_timedelta", 48, false],
+        ["deq_qdepth", 19, false],
+        ["ingress_global_timestamp", 64, false],
+        ["egress_global_timestamp", 64, false],
+        ["mcast_grp", 16, false],
+        ["egress_rid", 16, false],
+        ["checksum_error", 1, false],
+        ["parser_error", 32, false],
+        ["priority", 3, false],
+        ["_padding", 3, false]
+      ]
+    },
+    {
+      "name" : "xconnect_metadata",
+      "id" : 2,
+      "fields" : [
+        ["pathway", 32, false],
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["bsm_grp", 16, false],
+        ["bsm_info", 16, false],
+        ["_padding_0", 6, false]
+      ]
+    },
+    {
+      "name" : "qdevice_metadata",
+      "id" : 3,
+      "fields" : [
+        ["event_type", 32, false],
+        ["event_timestamp", 64, false],
+        ["operation", 32, false],
+        ["release_qubit", 9, false],
+        ["swap_bsm_id", 16, false],
+        ["swap_qubit_0", 9, false],
+        ["swap_qubit_1", 9, false],
+        ["bsm_id", 16, false],
+        ["bsm_success", 1, 0],
+        ["bsm_bell_index", 2, false],
+        ["_padding_1", 2, false]
+      ]
+    },
+    {
+      "name" : "ethernet_t",
+      "id" : 4,
+      "fields" : [
+        ["dst_addr", 48, false],
+        ["src_addr", 48, false],
+        ["ethertype", 16, false]
+      ]
+    },
+    {
+      "name" : "egp_t",
+      "id" : 5,
+      "fields" : [
+        ["link_label", 16, false],
+        ["pair_seq", 16, false],
+        ["bell_index", 2, false],
+        ["_reserved", 30, false]
+      ]
+    },
+    {
+      "name" : "qnp_t",
+      "id" : 6,
+      "fields" : [
+        ["circuit_id", 16, false],
+        ["pair_id", 16, false],
+        ["bell_index", 2, false],
+        ["_reserved", 30, false]
+      ]
+    }
+  ],
+  "headers" : [
+    {
+      "name" : "scalars",
+      "id" : 0,
+      "header_type" : "scalars_0",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "header_type" : "standard_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "qdevice_metadata",
+      "id" : 2,
+      "header_type" : "qdevice_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "xconnect_metadata",
+      "id" : 3,
+      "header_type" : "xconnect_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ethernet",
+      "id" : 4,
+      "header_type" : "ethernet_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "egp",
+      "id" : 5,
+      "header_type" : "egp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "qnp",
+      "id" : 6,
+      "header_type" : "qnp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    }
+  ],
+  "header_stacks" : [],
+  "header_union_types" : [],
+  "header_unions" : [],
+  "header_union_stacks" : [],
+  "field_lists" : [],
+  "errors" : [
+    ["NoError", 0],
+    ["PacketTooShort", 1],
+    ["NoMatch", 2],
+    ["StackOutOfBounds", 3],
+    ["HeaderTooShort", 4],
+    ["ParserTimeout", 5],
+    ["ParserInvalidArgument", 6]
+  ],
+  "enums" : [
+    {
+      "name" : "CloneType",
+      "entries" : [
+        ["E2E", 2],
+        ["I2E", 0],
+        ["Q2E", 1]
+      ]
+    },
+    {
+      "name" : "HashAlgorithm",
+      "entries" : [
+        ["crc16", 2],
+        ["crc16_custom", 3],
+        ["crc32", 0],
+        ["crc32_custom", 1],
+        ["csum16", 6],
+        ["identity", 5],
+        ["random", 4],
+        ["xor16", 7]
+      ]
+    },
+    {
+      "name" : "MeterType",
+      "entries" : [
+        ["bytes", 1],
+        ["packets", 0]
+      ]
+    },
+    {
+      "name" : "CounterType",
+      "entries" : [
+        ["bytes", 1],
+        ["packets", 0],
+        ["packets_and_bytes", 2]
+      ]
+    },
+    {
+      "name" : "PathWay",
+      "entries" : [
+        ["cnetwork", 0],
+        ["qdevice", 1]
+      ]
+    },
+    {
+      "name" : "QDeviceOperation",
+      "entries" : [
+        ["none", 0],
+        ["release", 2],
+        ["swap", 1]
+      ]
+    },
+    {
+      "name" : "QDeviceEventType",
+      "entries" : [
+        ["cnetwork", 2],
+        ["heralding_bsm_outcome", 0],
+        ["swap_bsm_outcome", 1]
+      ]
+    }
+  ],
+  "parsers" : [
+    {
+      "name" : "parser",
+      "id" : 0,
+      "init_state" : "start",
+      "parse_states" : [
+        {
+          "name" : "start",
+          "id" : 0,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ethernet"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x4401",
+              "mask" : null,
+              "next_state" : "parse_egp"
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x4402",
+              "mask" : null,
+              "next_state" : "parse_qnp"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "ethertype"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_egp",
+          "id" : 1,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "egp"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : []
+        },
+        {
+          "name" : "parse_qnp",
+          "id" : 2,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "egp"
+                }
+              ],
+              "op" : "extract"
+            },
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "qnp"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : []
+        }
+      ]
+    }
+  ],
+  "parse_vsets" : [],
+  "deparsers" : [
+    {
+      "name" : "deparser",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "q-end-node.p4",
+        "line" : 218,
+        "column" : 8,
+        "source_fragment" : "xDeparser"
+      },
+      "order" : ["ethernet", "egp", "qnp"],
+      "primitives" : []
+    }
+  ],
+  "meter_arrays" : [],
+  "counter_arrays" : [],
+  "register_arrays" : [],
+  "calculations" : [],
+  "learn_lists" : [],
+  "actions" : [
+    {
+      "name" : "xIngress.drop",
+      "id" : 0,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 78,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xIngress.forward",
+      "id" : 1,
+      "runtime_data" : [
+        {
+          "name" : "port",
+          "bitwidth" : 9
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 82,
+            "column" : 8,
+            "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "qendnode99",
+      "id" : 2,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "pathway"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000001"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 99,
+            "column" : 12,
+            "source_fragment" : "xconnect_metadata.pathway = PathWay.qdevice"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "qendnode101",
+      "id" : 3,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["ethernet", "$valid$"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 101,
+            "column" : 19,
+            "source_fragment" : "hdr.ethernet.isValid()"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 101,
+            "column" : 12,
+            "source_fragment" : "assert(hdr.ethernet.isValid())"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.qubit_release",
+      "id" : 4,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "operation"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000002"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 118,
+            "column" : 8,
+            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "release_qubit"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0001"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 7,
+            "column" : 29,
+            "source_fragment" : "0x001; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.qubit_release",
+      "id" : 5,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "operation"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000002"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 118,
+            "column" : 8,
+            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qdevice_metadata", "release_qubit"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0001"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 7,
+            "column" : 29,
+            "source_fragment" : "0x001; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.egp_to_qnp",
+      "id" : 6,
+      "runtime_data" : [
+        {
+          "name" : "circuit_id",
+          "bitwidth" : 16
+        },
+        {
+          "name" : "head_end",
+          "bitwidth" : 1
+        },
+        {
+          "name" : "next_mac_addr",
+          "bitwidth" : 48
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0001"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 7,
+            "column" : 29,
+            "source_fragment" : "0x001; ..."
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["ethernet", "$valid$"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 127,
+            "column" : 15,
+            "source_fragment" : "hdr.ethernet.isValid()"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp_0"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 127,
+            "column" : 8,
+            "source_fragment" : "assert(hdr.ethernet.isValid())"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "dst_addr"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 2
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 128,
+            "column" : 8,
+            "source_fragment" : "hdr.ethernet.dst_addr = next_mac_addr"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "ethertype"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x4402"
+            }
+          ],
+          "source_info" : {
+            "filename" : "headers.p4",
+            "line" : 5,
+            "column" : 30,
+            "source_fragment" : "0x4402; ..."
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_1"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["egp", "$valid$"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 132,
+            "column" : 15,
+            "source_fragment" : "hdr.egp.isValid()"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp_1"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 132,
+            "column" : 8,
+            "source_fragment" : "assert(hdr.egp.isValid())"
+          }
+        },
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "qnp"
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 135,
+            "column" : 8,
+            "source_fragment" : "hdr.qnp.setValid()"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qnp", "circuit_id"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 136,
+            "column" : 8,
+            "source_fragment" : "hdr.qnp.circuit_id = circuit_id"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qnp", "pair_id"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "?",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["egp", "pair_seq"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0x0000"
+                  },
+                  "cond" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "==",
+                      "left" : {
+                        "type" : "local",
+                        "value" : 1
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x01"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 137,
+            "column" : 8,
+            "source_fragment" : "hdr.qnp.pair_id ="
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qnp", "bell_index"]
+            },
+            {
+              "type" : "field",
+              "value" : ["egp", "bell_index"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 138,
+            "column" : 8,
+            "source_fragment" : "hdr.qnp.bell_index = hdr.egp.bell_index"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.egp_to_cpu",
+      "id" : 7,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0000"
+            }
+          ],
+          "source_info" : {
+            "filename" : "headers.p4",
+            "line" : 1,
+            "column" : 24,
+            "source_fragment" : "0x000; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "xQDevice.qnp_to_cpu",
+      "id" : 8,
+      "runtime_data" : [
+        {
+          "name" : "head_end",
+          "bitwidth" : 1
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["qnp", "pair_id"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "?",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["egp", "pair_seq"]
+                  },
+                  "right" : {
+                    "type" : "field",
+                    "value" : ["qnp", "pair_id"]
+                  },
+                  "cond" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "==",
+                      "left" : {
+                        "type" : "local",
+                        "value" : 0
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x01"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["xconnect_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0000"
+            }
+          ],
+          "source_info" : {
+            "filename" : "headers.p4",
+            "line" : 1,
+            "column" : 24,
+            "source_fragment" : "0x000; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "qendnode182",
+      "id" : 9,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_2"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "==",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["qdevice_metadata", "event_type"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x00000002"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 182,
+            "column" : 19,
+            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.cnetwork"
+          }
+        },
+        {
+          "op" : "assert",
+          "parameters" : [
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "tmp_2"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 182,
+            "column" : 12,
+            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.cnetwork)"
+          }
+        }
+      ]
+    }
+  ],
+  "pipelines" : [
+    {
+      "name" : "ingress",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "q-end-node.p4",
+        "line" : 71,
+        "column" : 8,
+        "source_fragment" : "xIngress"
+      },
+      "init_table" : "node_2",
+      "tables" : [
+        {
+          "name" : "tbl_qendnode99",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 99,
+            "column" : 38,
+            "source_fragment" : "="
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [2],
+          "actions" : ["qendnode99"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "qendnode99" : null
+          },
+          "default_entry" : {
+            "action_id" : 2,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_qendnode101",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 101,
+            "column" : 12,
+            "source_fragment" : "assert(hdr.ethernet.isValid())"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [3],
+          "actions" : ["qendnode101"],
+          "base_default_next" : "xIngress.ethernet_tbl",
+          "next_tables" : {
+            "qendnode101" : "xIngress.ethernet_tbl"
+          },
+          "default_entry" : {
+            "action_id" : 3,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "xIngress.ethernet_tbl",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 85,
+            "column" : 10,
+            "source_fragment" : "ethernet_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.ethernet.dst_addr",
+              "target" : ["ethernet", "dst_addr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [1, 0],
+          "actions" : ["xIngress.forward", "xIngress.drop"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xIngress.forward" : null,
+            "xIngress.drop" : null
+          },
+          "default_entry" : {
+            "action_id" : 0,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_2",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 98,
+            "column" : 12,
+            "source_fragment" : "hdr.egp.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["egp", "$valid$"]
+              }
+            }
+          },
+          "true_next" : "tbl_qendnode99",
+          "false_next" : "tbl_qendnode101"
+        }
+      ]
+    },
+    {
+      "name" : "qdevice",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "q-end-node.p4",
+        "line" : 111,
+        "column" : 8,
+        "source_fragment" : "xQDevice"
+      },
+      "init_table" : "node_8",
+      "tables" : [
+        {
+          "name" : "tbl_qendnode182",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 182,
+            "column" : 12,
+            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.cnetwork)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [9],
+          "actions" : ["qendnode182"],
+          "base_default_next" : "node_10",
+          "next_tables" : {
+            "qendnode182" : "node_10"
+          },
+          "default_entry" : {
+            "action_id" : 9,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "xQDevice.qnp_tbl",
+          "id" : 4,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 167,
+            "column" : 10,
+            "source_fragment" : "qnp_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.qnp.circuit_id",
+              "target" : ["qnp", "circuit_id"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [8, 5],
+          "actions" : ["xQDevice.qnp_to_cpu", "xQDevice.qubit_release"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xQDevice.qnp_to_cpu" : null,
+            "xQDevice.qubit_release" : null
+          },
+          "default_entry" : {
+            "action_id" : 5,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        },
+        {
+          "name" : "xQDevice.egp_tbl",
+          "id" : 5,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 145,
+            "column" : 10,
+            "source_fragment" : "egp_tbl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.egp.link_label",
+              "target" : ["egp", "link_label"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [6, 7, 4],
+          "actions" : ["xQDevice.egp_to_qnp", "xQDevice.egp_to_cpu", "xQDevice.qubit_release"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "xQDevice.egp_to_qnp" : null,
+            "xQDevice.egp_to_cpu" : null,
+            "xQDevice.qubit_release" : null
+          },
+          "default_entry" : {
+            "action_id" : 4,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_8",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 179,
+            "column" : 12,
+            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "==",
+              "left" : {
+                "type" : "field",
+                "value" : ["qdevice_metadata", "event_type"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "0x00000000"
+              }
+            }
+          },
+          "true_next" : null,
+          "false_next" : "tbl_qendnode182"
+        },
+        {
+          "name" : "node_10",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 184,
+            "column" : 16,
+            "source_fragment" : "hdr.qnp.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["qnp", "$valid$"]
+              }
+            }
+          },
+          "true_next" : "xQDevice.qnp_tbl",
+          "false_next" : "node_12"
+        },
+        {
+          "name" : "node_12",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "q-end-node.p4",
+            "line" : 186,
+            "column" : 23,
+            "source_fragment" : "hdr.egp.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["egp", "$valid$"]
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "xQDevice.egp_tbl"
+        }
+      ]
+    },
+    {
+      "name" : "egress",
+      "id" : 2,
+      "source_info" : {
+        "filename" : "q-end-node.p4",
+        "line" : 197,
+        "column" : 8,
+        "source_fragment" : "xEgress"
+      },
+      "init_table" : null,
+      "tables" : [],
+      "action_profiles" : [],
+      "conditionals" : []
+    }
+  ],
+  "checksums" : [],
+  "force_arith" : [],
+  "extern_instances" : [],
+  "field_aliases" : [
+    [
+      "queueing_metadata.enq_timestamp",
+      ["standard_metadata", "enq_timestamp"]
+    ],
+    [
+      "queueing_metadata.enq_qdepth",
+      ["standard_metadata", "enq_qdepth"]
+    ],
+    [
+      "queueing_metadata.deq_timedelta",
+      ["standard_metadata", "deq_timedelta"]
+    ],
+    [
+      "queueing_metadata.deq_qdepth",
+      ["standard_metadata", "deq_qdepth"]
+    ],
+    [
+      "intrinsic_metadata.ingress_global_timestamp",
+      ["standard_metadata", "ingress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.egress_global_timestamp",
+      ["standard_metadata", "egress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.mcast_grp",
+      ["standard_metadata", "mcast_grp"]
+    ],
+    [
+      "intrinsic_metadata.egress_rid",
+      ["standard_metadata", "egress_rid"]
+    ],
+    [
+      "intrinsic_metadata.priority",
+      ["standard_metadata", "priority"]
+    ]
+  ],
+  "program" : "q-end-node.p4",
+  "__meta__" : {
+    "version" : [2, 23],
+    "compiler" : "https://github.com/p4lang/p4c"
+  }
+}
