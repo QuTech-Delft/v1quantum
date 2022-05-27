@@ -8,8 +8,6 @@ from netsquid_p4.node import P4Node
 from netsquid_p4_v1quantum import V1QuantumDevice, BsmOutcome
 from netsquid_physlayer.detectors import BSMDetector
 
-from util.rtt import RttProtocol
-
 
 class HeraldingStation(P4Node):
     """The Heralding Station device.
@@ -182,7 +180,7 @@ class PortProtocol(NodeProtocol):
         self.__forwarding_port = port
 
     def __process_message(self, message):
-        if isinstance(message, RttProtocol.Message) and (message.src != self.node.name):
+        if hasattr(message, "src") and hasattr(message, "dst") and (message.src != self.node.name):
             message.dst = self.node.name
             self.__port.tx_output(message)
         elif self.__forwarding_port is not None:
@@ -338,7 +336,7 @@ class HeraldingProtocol(NodeProtocol):
                 for port_i, msg in enumerate([self.__cl0.rx_input(), self.__cl1.rx_input()]):
                     if msg is not None:
                         assert len(msg.items) == 1
-                        assert isinstance(msg.items[0], QNodeReady)
+                        assert msg.items[0].__class__.__name__ == "QNodeReady"
                         assert not node_ready[port_i]
                         node_ready[port_i] = True
 

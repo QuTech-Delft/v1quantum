@@ -11,7 +11,7 @@ from pyp4_v1quantum import V1QuantumBellIndex
 from netsquid_p4.node import P4Node
 from netsquid_p4_v1quantum import V1QuantumDevice, BsmOutcome
 
-from components.heralding_station import NewBsmGroup, QNodeReady, EntParams
+from components.heralding_station import QNodeReady
 from util.rtt import RttProtocol
 
 
@@ -222,7 +222,7 @@ class HeraldingProtocol(NodeProtocol):
             msg = self.__clport.rx_input()
             assert msg is not None
             assert len(msg.items) == 1
-            assert isinstance(msg.items[0], NewBsmGroup)
+            assert msg.items[0].__class__.__name__ == "NewBsmGroup"
             self.__wait_for_bsm_group = False
 
         # Estimate the RTT next.
@@ -242,7 +242,7 @@ class HeraldingProtocol(NodeProtocol):
                 msg = self.__clport.rx_input()
                 if msg is not None:
                     assert len(msg.items) == 1
-                    assert isinstance(msg.items[0], NewBsmGroup)
+                    assert msg.items[0].__class__.__name__ == "NewBsmGroup"
                     self.__new_bsm_group()
                     return
 
@@ -262,12 +262,12 @@ class HeraldingProtocol(NodeProtocol):
             assert len(msg.items) == 1
 
             # A NewBsmGroup message means we need reset the protocol.
-            if isinstance(msg.items[0], NewBsmGroup):
+            if msg.items[0].__class__.__name__ == "NewBsmGroup":
                 self.__new_bsm_group()
                 return
 
             # Otherwise we expect an EntParams.
-            assert isinstance(msg.items[0], EntParams)
+            assert msg.items[0].__class__.__name__ == "EntParams"
             generator = ExcitedPairPreparation()
             alpha = msg.items[0].alpha
 
@@ -290,13 +290,13 @@ class HeraldingProtocol(NodeProtocol):
 
                 # A NewBsmGroup message means we need reset the protocol.
                 assert len(msg.items) == 1
-                if isinstance(msg.items[0], NewBsmGroup):
+                if msg.items[0].__class__.__name__ == "NewBsmGroup":
                     self.node.qubit_discard(self.__qubit)
                     self.__new_bsm_group()
                     return
 
                 # Otherwise, we actually got a heralding message to process.
-                assert isinstance(msg.items[0], BsmOutcome)
+                assert msg.items[0].__class__.__name__ == "BsmOutcome"
                 bsm_outcome = msg.items[0]
 
                 # On a failure we discard the qubit, on a success we break the attempt loop. In both
