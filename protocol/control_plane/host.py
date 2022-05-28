@@ -12,8 +12,8 @@ import netsquid as ns
 from pydynaa import EventType
 from pyp4_v1quantum import V1QuantumBellIndex
 
-from protocol.agent import Agent
-from protocol.protocol import QcpMsg, QcpOp, RequestMsg
+from protocol.control_plane.agent import Agent
+from protocol.control_plane.protocol import QcpMsg, QcpOp, RequestMsg
 
 
 CTL_PORT = 0x200
@@ -90,9 +90,9 @@ class EntangleAndMeasure(NodeProtocol):
 
         Parameters
         ----------
-        app0_results : `experiments.network.protocol.host.EntangleAndMeasure.RequestData`
+        app0_results : `protocol.control_plane.host.EntangleAndMeasure.RequestData`
             Results from one of the hosts.
-        app1_results : `experiments.network.protocol.host.EntangleAndMeasure.RequestData`
+        app1_results : `protocol.control_plane.host.EntangleAndMeasure.RequestData`
             Results from the other host.
 
         """

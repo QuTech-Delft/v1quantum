@@ -13,7 +13,7 @@ from pyp4_v1quantum import BsmGroupEntry
 from netsquid_netrunner.generators.network import Topology
 
 from generate import experiment_topology
-from protocol.protocol import (
+from protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
     BsmGrpDestroyMsg,
     QcpMsg,

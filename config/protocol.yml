@@ -1,19 +1,31 @@
 controller:
   control_plane:
-    class: protocol.controller.Controller
+    class: protocol.control_plane.controller.Controller
 router:
-  data_plane: ./protocol/p4/q-int-node.json
+  data_plane:
+    class: protocol.data_plane.p4.P4DataPlane
+    kwargs:
+      program_file_name: ./protocol/data_plane/p4/q-int-node.json
   control_plane:
-    class: protocol.agent.Agent
+    class: protocol.control_plane.agent.Agent
 repeater:
-  data_plane: ./protocol/p4/q-int-node.json
+  data_plane:
+    class: protocol.data_plane.p4.P4DataPlane
+    kwargs:
+      program_file_name: ./protocol/data_plane/p4/q-int-node.json
   control_plane:
-    class: protocol.agent.Agent
+    class: protocol.control_plane.agent.Agent
 heralding_station:
-  data_plane: ./protocol/p4/heralding_station.json
+  data_plane:
+    class: protocol.data_plane.p4.P4DataPlane
+    kwargs:
+      program_file_name: ./protocol/data_plane/p4/heralding_station.json
   control_plane:
-    class: protocol.agent.Agent
+    class: protocol.control_plane.agent.Agent
 host:
-  data_plane: ./protocol/p4/q-end-node.json
+  data_plane:
+    class: protocol.data_plane.p4.P4DataPlane
+    kwargs:
+      program_file_name: ./protocol/data_plane/p4/q-end-node.json
   control_plane:
-    class: protocol.host.EntangleAndMeasure
+    class: protocol.control_plane.host.EntangleAndMeasure
