@@ -1,4 +1,8 @@
-netsquid-netrunner
-netsquid-p4-v1quantum
+netsquid==1.*
+git+ssh://git@gitlab.tudelft.nl/qp4/netsquid-netrunner.git@v0.1.0#egg=netsquid-netrunner
 netsquid-physlayer
+git+ssh://git@gitlab.tudelft.nl/qp4/pyp4.git@v0.1.0#egg=pyp4
+git+ssh://git@gitlab.tudelft.nl/qp4/pyp4-v1quantum.git@v0.1.0#egg=pyp4-v1quantum
+git+ssh://git@gitlab.tudelft.nl/qp4/netsquid-p4.git@v0.1.0#egg=netsquid-p4
+git+ssh://git@gitlab.tudelft.nl/qp4/netsquid-p4-v1quantum.git@v0.1.0#egg=netsquid-p4-v1quantum
 networkx
