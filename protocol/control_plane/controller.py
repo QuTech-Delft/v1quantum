@@ -11,8 +11,9 @@ import networkx as nx
 from pydynaa import EventHandler, EventType
 from pyp4_v1quantum import BsmGroupEntry
 from netsquid_netrunner.generators.network import Topology
+from netsquid_netrunner.generators import topologies
 
-from generate import experiment_topology
+from generate import generate_qrx_network
 from protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
     BsmGrpDestroyMsg,
@@ -172,11 +173,11 @@ class Controller(NodeProtocol):
         # State used for path reservation.
         # ------------------------------------------------------------------------------------------
 
-        self.__pending: Dict[str, Dict[int, RequestMsg]] = {}
-        self.__reserve_queue: OrderedDict = OrderedDict()
-        self.__release_queue: List[RequestMsg] = []
-        self.__installing: Optional[ActiveCircuit] = None
-        self.__active: Optional[ActiveCircuit] = None
+        self._pending: Dict[str, Dict[int, RequestMsg]] = {}
+        self._reserve_queue: OrderedDict = OrderedDict()
+        self._release_queue: List[RequestMsg] = []
+        self._installing: Dict[ActiveCircuit] = {}
+        self._active: Dict[ActiveCircuit] = {}
 
         # ------------------------------------------------------------------------------------------
         # Keep track of in flight messages.
@@ -215,8 +216,14 @@ class Controller(NodeProtocol):
 
     def _route_computation(self):
         self._routing: Routing = Routing()
-        experiment_topology(self._routing)
+        generate_qrx_network(self._routing)
         self._routing.compute_routes()
+
+    def _assign_bsm_grp_id(self, _node):
+        return 0
+
+    def _release_bsm_grp_id(self, _node, bsm_grp_id):
+        assert bsm_grp_id == 0
 
     def __assign_rule_id(self):
         rule_id = self.__next_rule_id
@@ -256,40 +263,40 @@ class Controller(NodeProtocol):
 
     def __request_msg(self, message: RequestMsg):
         # This function processes the incoming message and effectively declares what the desired
-        # state is by populatting the self.__reserve_queue and self.__release_queue collections.
+        # state is by populatting the self._reserve_queue and self._release_queue collections.
         assert message.msg_type in (QcpOp.OP_RSRV, QcpOp.OP_FREE)
 
         # Make a note that a host is requesting a connection with a particular remote.
-        if message.source in self.__pending:
-            assert message.request_id not in self.__pending[message.source]
+        if message.source in self._pending:
+            assert message.request_id not in self._pending[message.source]
         else:
-            self.__pending[message.source] = {}
-        self.__pending[message.source][message.request_id] = message
+            self._pending[message.source] = {}
+        self._pending[message.source][message.request_id] = message
 
         # If the remote has already asked for the same connection, connect them.
-        if (message.remote in self.__pending and
-                message.request_id in self.__pending[message.remote] and
-                self.__pending[message.remote][message.request_id].remote == message.source):
-            assert message.msg_type == self.__pending[message.remote][message.request_id].msg_type
+        if (message.remote in self._pending and
+                message.request_id in self._pending[message.remote] and
+                self._pending[message.remote][message.request_id].remote == message.source):
+            assert message.msg_type == self._pending[message.remote][message.request_id].msg_type
             assert message.request_id == \
-                self.__pending[message.remote][message.request_id].request_id
+                self._pending[message.remote][message.request_id].request_id
 
             if message.msg_type == QcpOp.OP_RSRV:
-                self.__reserve_queue[tuple(sorted((message.source, message.remote)))] = message
+                self._reserve_queue[tuple(sorted((message.source, message.remote)))] = message
             else:
                 assert message.msg_type == QcpOp.OP_FREE
-                self.__release_queue.append(message)
+                self._release_queue.append(message)
 
-            del self.__pending[message.source][message.request_id]
-            if not self.__pending[message.source]:
-                del self.__pending[message.source]
+            del self._pending[message.source][message.request_id]
+            if not self._pending[message.source]:
+                del self._pending[message.source]
 
-            del self.__pending[message.remote][message.request_id]
-            if not self.__pending[message.remote]:
-                del self.__pending[message.remote]
+            del self._pending[message.remote][message.request_id]
+            if not self._pending[message.remote]:
+                del self._pending[message.remote]
 
         # Process the reservations.
-        self.__reserve_release()
+        self._reserve_release()
 
     def __rule_msg(self, message: RuleMsg):
         if message.rule_action in (RuleAction.INSERT_TABLE_ENTRY, RuleAction.CREATE_BSM_GRP):
@@ -313,19 +320,20 @@ class Controller(NodeProtocol):
                 del self.__reserve_msgs[message.circuit_id]
 
                 # Notify the nodes.
-                self.__notify(RequestMsg(
+                self._notify(RequestMsg(
                     msg_type=QcpOp.OP_RSRV,
-                    source=self.__installing.pair[0],
-                    remote=self.__installing.pair[1],
+                    source=self._installing[message.circuit_id].pair[0],
+                    remote=self._installing[message.circuit_id].pair[1],
                     request_id=message.circuit_id,
                 ))
 
                 # And mark as active.
-                self.__active, self.__installing = self.__installing, None
+                self._active[message.circuit_id] = self._installing[message.circuit_id]
+                del self._installing[message.circuit_id]
 
                 # Schedule a __reserve_release if that was the last message.
                 self._wait_once(
-                    EventHandler(lambda _: self.__reserve_release()),
+                    EventHandler(lambda _: self._reserve_release()),
                     entity=self,
                     event=self._schedule_now(EventType("__RESERVE_RELEASE", "__reserve_release")),
                 )
@@ -342,64 +350,66 @@ class Controller(NodeProtocol):
                 del self.__release_msgs[message.circuit_id]
 
                 # Notify the nodes.
-                self.__notify(RequestMsg(
+                self._notify(RequestMsg(
                     msg_type=QcpOp.OP_FREE,
-                    source=self.__active.pair[0],
-                    remote=self.__active.pair[1],
+                    source=self._active[message.circuit_id].pair[0],
+                    remote=self._active[message.circuit_id].pair[1],
                     request_id=message.circuit_id,
                 ))
 
                 # And deactivate.
-                self.__active = None
+                del self._active[message.circuit_id]
 
                 # Schedule a __reserve_release if that was the last message.
                 self._wait_once(
-                    EventHandler(lambda _: self.__reserve_release()),
+                    EventHandler(lambda _: self._reserve_release()),
                     entity=self,
                     event=self._schedule_now(EventType("__RESERVE_RELEASE", "__reserve_release")),
                 )
 
-    def __reserve_release(self):
+    def _reserve_release(self):
         # First process the releases.
-        while self.__release_queue:
-            message = self.__release_queue.pop()
+        while self._release_queue:
+            message = self._release_queue.pop()
             pair = tuple(sorted((message.source, message.remote)))
 
-            if (self.__active is not None) and (pair == self.__active.pair):
+            if message.request_id in self._active:
+                assert pair == self._active[message.request_id].pair
                 # The circuit is active and needs to be released. If it is installing, we must wait
                 # until it finishes installing as otherwise we won't have the handles.
-                self.__release(message)
+                self._release(message)
 
-            elif pair in self.__reserve_queue:
+            elif pair in self._reserve_queue:
                 # Circuit is not active, but is queued up. Remove it from the queue.
-                del self.__reserve_queue[pair]
-                self.__notify(message)
+                del self._reserve_queue[pair]
+                self._notify(message)
 
             else:
                 # Log any leftover releases. This shouldn't happen if the nodes are behaving.
                 logger.warning("No match for RELEASE of %s", pair)
 
         # And finally, if there is no active circuit, install the next one that is queued up.
-        while self.__reserve_queue and (self.__active is None) and (self.__installing is None):
-            _, message = self.__reserve_queue.popitem()
-            self.__reserve(message)
+        while self._reserve_queue and (not self._active) and (not self._installing):
+            _, message = self._reserve_queue.popitem()
+            self._reserve(message)
 
-    def __reserve(self, message: RequestMsg):
-        assert self.__installing is None
-        assert self.__active is None
-        self.__installing = ActiveCircuit(
+    def _reserve(self, message: RequestMsg):
+        assert message.request_id not in self._installing
+        assert message.request_id not in self._active
+        self._installing[message.request_id] = ActiveCircuit(
             circuit_id=message.request_id,
             pair=tuple(sorted((message.source, message.remote))),
         )
         self.__install_path(cid=message.request_id, src=message.source, dst=message.remote)
 
-    def __release(self, message: RequestMsg):
-        assert self.__installing is None
-        assert self.__active is not None
-        assert self.__active.pair == tuple(sorted((message.source, message.remote)))
+    def _release(self, message: RequestMsg):
+        assert message.request_id not in self._installing
+        assert message.request_id in self._active
+        assert self._active[message.request_id].pair == \
+            tuple(sorted((message.source, message.remote)))
         self.__uninstall_path(message.request_id)
 
-    def __notify(self, message):
+    def _notify(self, message):
         self.node.ports[message.source].tx_output(copy.deepcopy(message))
 
         message.source, message.remote = message.remote, message.source
@@ -541,7 +551,7 @@ class Controller(NodeProtocol):
         port_r = self._routing.egress(node, route[n_i + 1])
         bsm_grp_entry_0 = BsmGroupEntry(egress_port=port_l, bsm_info=port_r)
         bsm_grp_entry_1 = BsmGroupEntry(egress_port=port_r, bsm_info=port_l)
-        bsm_grp_id = 0
+        bsm_grp_id = self._assign_bsm_grp_id(node)
 
         message = BsmGrpCreateMsg(
             msg_type=QcpOp.OP_RULE,
@@ -678,3 +688,69 @@ class Controller(NodeProtocol):
             )
             self.node.ports[bsm_grp_handle.node].tx_output(message)
             self.__release_msgs[cid].add(message.rule_id)
+            self._release_bsm_grp_id(table_handle.node, bsm_grp_handle.bsm_grp_id)
+
+
+class HubController(Controller):
+
+    def __init__(self, node, *_args, **_kwargs):
+        super().__init__(node, *_args, **_kwargs)
+        self.__bsm_grp_id_set = set(range(
+            0,
+            self.node.network_config["components"]["qhs"]["properties"]["num_bsm_units"],
+        ))
+
+    def _route_computation(self):
+        self._routing: Routing = Routing()
+
+        num_heralding_stations = 0
+        num_spokes = 0
+        for component, properties in self.node.network_config["components"].items():
+            if properties["type"] == "heralding_station":
+                assert component == "qhs"
+                num_heralding_stations += 1
+            elif properties["type"] == "host":
+                num_spokes += 1
+            else:
+                assert properties["type"] in set(
+                    ["controller", "classical_connection", "quantum_connection"]
+                )
+
+        assert num_heralding_stations == 1
+        assert num_spokes >= 2
+
+        topologies.star.main(self._routing, 0, num_spokes)
+        self._routing.compute_routes()
+
+    def _assign_bsm_grp_id(self, _node):
+        return self.__bsm_grp_id_set.pop()
+
+    def _release_bsm_grp_id(self, _node, bsm_grp_id):
+        assert bsm_grp_id not in self.__bsm_grp_id_set
+        self.__bsm_grp_id_set.add(bsm_grp_id)
+
+    def _reserve_release(self):
+        # First process the releases.
+        while self._release_queue:
+            message = self._release_queue.pop()
+            pair = tuple(sorted((message.source, message.remote)))
+
+            if message.request_id in self._active:
+                assert pair == self._active[message.request_id].pair
+                # The circuit is active and needs to be released. If it is installing, we must wait
+                # until it finishes installing as otherwise we won't have the handles.
+                self._release(message)
+
+            elif pair in self._reserve_queue:
+                # Circuit is not active, but is queued up. Remove it from the queue.
+                del self._reserve_queue[pair]
+                self._notify(message)
+
+            else:
+                # Log any leftover releases. This shouldn't happen if the nodes are behaving.
+                logger.warning("No match for RELEASE of %s", pair)
+
+        # And finally, if there is no active circuit, install the next one that is queued up.
+        while self._reserve_queue and self.__bsm_grp_id_set:
+            _, message = self._reserve_queue.popitem()
+            self._reserve(message)

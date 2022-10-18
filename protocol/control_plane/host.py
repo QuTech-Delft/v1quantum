@@ -3,13 +3,15 @@
 from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
+from functools import reduce
 import logging
 from queue import Queue
 from typing import Optional
 
+from netsquid_netrunner.loaders.demand import NetworkApp
 from netsquid.protocols import NodeProtocol
 import netsquid as ns
-from pydynaa import EventType
+from pydynaa import EventType, EventHandler
 from pyp4_v1quantum import V1QuantumBellIndex
 
 from protocol.control_plane.agent import Agent
@@ -24,6 +26,8 @@ logger = logging.getLogger(__name__)
 
 class Signals(Enum):
     """Signals used by the Entangle and Measure protocol and its subprotocols."""
+    HANDSHAKE_START = EventType("HANDSHAKE_START", "Initiate host handshake")
+    HANDSHAKE_COMPL = EventType("HANDSHAKE_COMPL", "Host handshake complete")
     RESERVE_START = EventType("RESERVE_START", "Reserve a BSM group")
     RESERVE_COMPL = EventType("RESERVE_COMPL", "BSM group reserved")
     ENTMSR_START = EventType("ENTMSR_START", "Entangle and measure")
@@ -48,21 +52,34 @@ class EntangleAndMeasure(NodeProtocol):
 
     @dataclass
     class RequestData:
+        request: NetworkApp
+        results: 'EntangleAndMeasure.RequestResults'
+        handshake_attempts: int = 0
+        remote_ready: bool = False
+
+    @dataclass
+    class RequestResults:
         """Internal request state."""
-        request: 'EntangleAndMeasure.Request'
         request_time: float
         start_time: Optional[float] = None
         end_time: Optional[float] = None
         outcomes: Optional[list] = None
 
+    @dataclass
+    class Handshake:
+        """Handshake message."""
+        request: NetworkApp
+        remote_ready: bool = False
+
     def __init__(self, node, network_config):
         # pylint: disable=unused-argument
         super().__init__(node)
         self.__host = self.node.name
+        self.random = ns.get_random_state()
 
-        self.add_subprotocol(EntangleAndMeasure.HostCommSubProtocol(node, self), "HOSTCOMM")
         self.add_subprotocol(EntangleAndMeasure.CtlPortSubProtocol(node), "CTLPORT")
         self.add_subprotocol(EntangleAndMeasure.AgentSubProtocol(node, self), "AGENT")
+        self.add_subprotocol(EntangleAndMeasure.HandshakeSubProtocol(node, self), "HANDSHAKE")
         self.add_subprotocol(EntangleAndMeasure.ReserveSubProtocol(node, self), "RESERVE")
         self.add_subprotocol(EntangleAndMeasure.ReleaseSubProtocol(node, self), "RELEASE")
         self.add_subprotocol(EntangleAndMeasure.EntMsrSubProtocol(node, self), "ENTMSR")
@@ -72,6 +89,7 @@ class EntangleAndMeasure(NodeProtocol):
 
         self.__current_request_id = None
         self.__current_remote_id = None
+        self.__reattempts = {}
         self.__requests = Queue()
         self.__results = {}
 
@@ -152,23 +170,54 @@ class EntangleAndMeasure(NodeProtocol):
             The issued request.
 
         """
-        self.node.ports[str(new_request.remote)].tx_output(deepcopy(new_request))
-        self.local_request(new_request)
+        request_data = EntangleAndMeasure.RequestData(
+            request=new_request,
+            results=EntangleAndMeasure.RequestResults(request_time=ns.sim_time()),
+        )
+        self.enqueue_request(request_data)
 
-    def local_request(self, new_request):
+    def reattempt_request_after(self, request_data, delay):
+        """Insert the request into the local store after the provided delay.
+
+        Parameters
+        ----------
+        request_data : `qp4_simulations.host.app.Request`
+            The request.
+        delay : `float`
+            The delay.
+
+        """
+        event = self._schedule_after(delay, EventType("ENQUEUE_REQUEST", "enqueue_request"))
+        self.__reattempts[event.id] = request_data
+        self._wait_once(EventHandler(self.reattempt_enqueue_request), entity=self, event=event)
+
+    def reattempt_enqueue_request(self, event):
         """Insert the request into the local store.
 
         Parameters
         ----------
-        new_request : `qp4_simulations.host.app.Request`
+        request_data : `qp4_simulations.host.app.Request`
             The request.
 
         """
-        request_data = EntangleAndMeasure.RequestData(
-            request=new_request, request_time=ns.sim_time())
+        request_data = self.__reattempts.pop(event.id)
+        self.enqueue_request(request_data)
+
+    def enqueue_request(self, request_data):
+        """Insert the request into the local store.
+
+        Parameters
+        ----------
+        request_data : `qp4_simulations.host.app.Request`
+            The request.
+
+        """
         self.__requests.put(request_data)
         if self.__requests.qsize() == 1:
             self.send_signal(Signals.RESTART)
+
+    def is_idle(self):
+        return (self.__current_request_id is None)
 
     def results(self, request_id):
         """Get the results for a particular request.
@@ -201,43 +250,59 @@ class EntangleAndMeasure(NodeProtocol):
 
             assert request.request_id not in self.__results
             self.__current_request_id = request.request_id
-            self.__current_remote_id = request.remote
+            self.__current_remote_id = request.node1
 
-            # Start by sending a message to the controller to reserve a circuit.
+            # First handshake with the other host.
+            if not request_data.remote_ready:
+                self.send_signal(Signals.HANDSHAKE_START, result=request_data)
+                yield self.await_signal(self.subprotocols["HANDSHAKE"], Signals.HANDSHAKE_COMPL)
+                request_data = self.subprotocols["HANDSHAKE"].get_signal_result(
+                    Signals.HANDSHAKE_COMPL, self)
+
+                # The request has been enqueued for a reattempt.
+                if request_data is None:
+                    self.__current_request_id = None
+                    self.__current_remote_id = None
+                    continue
+
+            # Verify assumption.
+            assert request_data.remote_ready
+
+            # Send a message to the controller to reserve a circuit.
             self.send_signal(
                 Signals.RESERVE_START,
                 result=EntangleAndMeasure.ReserveSubProtocol.Params(
-                    remote=request.remote,
+                    remote=request.node1,
                     request_id=request.request_id,
                 )
             )
             yield self.await_signal(self.subprotocols["RESERVE"], Signals.RESERVE_COMPL)
 
             # Start time is the moment we start entangling.
-            request_data.start_time = ns.sim_time()
+            request_data.results.start_time = ns.sim_time()
 
             # Entangle and measure
             entmsr_params = EntangleAndMeasure.EntMsrSubProtocol.Params(
                 request_id=request.request_id,
-                remote_id=request.remote,
+                remote_id=request.node1,
                 num_pairs=request.parameters["num_pairs"],
             )
             self.send_signal(Signals.ENTMSR_START, result=entmsr_params)
             yield self.await_signal(self.subprotocols["ENTMSR"], Signals.ENTMSR_COMPL)
-            request_data.outcomes = \
+            request_data.results.outcomes = \
                 self.subprotocols["ENTMSR"].get_signal_result(Signals.ENTMSR_COMPL, self)
 
             # End time is the moment entanglement completes.
-            request_data.end_time = ns.sim_time()
+            request_data.results.end_time = ns.sim_time()
 
             # The results are ready.
-            self.__results[request.request_id] = request_data
+            self.__results[request.request_id] = request_data.results
 
             # Send a release now.
             self.send_signal(
                 Signals.RELEASE_START,
                 result=EntangleAndMeasure.ReleaseSubProtocol.Params(
-                    remote=request.remote,
+                    remote=request.node1,
                     request_id=request.request_id,
                 ),
             )
@@ -247,10 +312,11 @@ class EntangleAndMeasure(NodeProtocol):
             self.__current_request_id = None
             self.__current_remote_id = None
 
-    class HostCommSubProtocol(NodeProtocol):
-        """The inter-host communication subprotocol.
+    class HandshakeSubProtocol(NodeProtocol):
+        """The inter-host handshake subprotocol.
 
-        This subprotocol listens on the ports leading to the other hosts and handles the messages.
+        This subprotocol listens on the ports leading to the other hosts and handles handshake
+        messages.
 
 
         Parameters
@@ -265,40 +331,93 @@ class EntangleAndMeasure(NodeProtocol):
         def __init__(self, node, parent):
             super().__init__(node)
             self.__parent = parent
+            self.__request_data = None
+            self.__origin_handhshake_send_time = None
+            self.add_signal(Signals.HANDSHAKE_START)
+            self.add_signal(Signals.HANDSHAKE_COMPL)
+
+        def __host_ports(self):
+            return filter(
+                lambda p: not (p.name.isdigit() or
+                               p.name.startswith("cl-") or
+                               p.name.startswith("qu")),
+                self.node.ports.values(),
+            )
+
+        def __await_host_port_input(self):
+            return reduce(
+                lambda a, b: a | b,
+                [self.await_port_input(p) for p in self.__host_ports()],
+            )
+
+        def __send_local_origin_handshake(self):
+            assert not self.__request_data.remote_ready
+            self.__request_data.handshake_attempts += 1
+            handshake = EntangleAndMeasure.Handshake(request=deepcopy(self.__request_data.request))
+            self.node.ports[str(handshake.request.node1)].tx_output(handshake)
+            self.__origin_handhshake_send_time = ns.sim_time()
+
+        def __process_local_origin_handshake(self, handshake):
+            if not handshake.remote_ready:
+                self.__parent.reattempt_request_after(
+                    self.__request_data,
+                    (2 ** min(self.__request_data.handshake_attempts-1, 3)) *
+                    (1.0 + self.__parent.random.random_sample()) *
+                    (ns.sim_time() - self.__origin_handhshake_send_time),
+                )
+                self.__request_data = None
+            else:
+                self.__request_data.remote_ready = True
+
+        def __process_remote_origin_handshake(self, rx_port, handshake):
+            if self.__parent.is_idle():
+                request = deepcopy(handshake.request)
+                request.node0, request.node1 = request.node1, request.node0
+                request_data = EntangleAndMeasure.RequestData(
+                    request=request,
+                    results=EntangleAndMeasure.RequestResults(request_time=ns.sim_time()),
+                    remote_ready=True,
+                )
+                self.__parent.enqueue_request(request_data)
+                handshake.remote_ready = True
+            else:
+                handshake.remote_ready = False
+
+            rx_port.tx_output(handshake)
 
         def run(self):
             """Run the subprotocol."""
             while True:
-                # Listen on all host ports - recognised by port names that start with 'h'.
-                event = None
-                for port in filter(
-                        lambda p: not (p.name.isdigit() or
-                                       p.name.startswith("cl-") or
-                                       p.name.startswith("qu")),
-                        self.node.ports.values(),
-                ):
-                    if event is None:
-                        event = self.await_port_input(port)
-                    else:
-                        event |= self.await_port_input(port)
+                event = self.__await_host_port_input() | \
+                    self.await_signal(self.__parent, Signals.HANDSHAKE_START)
                 yield event
 
-                for port in filter(
-                        lambda p: not (p.name.isdigit() or
-                                       p.name.startswith("cl-") or
-                                       p.name.startswith("qu")),
-                        self.node.ports.values(),
-                ):
+                assert len(event.triggered_events) == 1
+                if event.triggered_events[0].type.name == Signals.HANDSHAKE_START.name:
+                    assert self.__request_data is None
+
+                    self.__request_data = self.__parent.get_signal_result(
+                        Signals.HANDSHAKE_START, self)
+                    self.__send_local_origin_handshake()
+
+                    continue
+
+                for port in self.__host_ports():
                     msg = port.rx_input()
 
                     # Because we must loop through all the ports to figure out which one triggered
                     # the event, some of them will return None.
                     if msg is not None:
                         assert msg.items is not None
-                        assert len(msg.items) == 1
-                        request = msg.items[0]
-                        request.remote = port.name
-                        self.__parent.local_request(msg.items[0])
+                        for handshake in msg.items:
+                            if handshake.request.node1 == self.node.name:
+                                self.__process_remote_origin_handshake(port, handshake)
+                            else:
+                                assert handshake.request.node0 == self.node.name
+                                self.__process_local_origin_handshake(handshake)
+
+                                self.send_signal(Signals.HANDSHAKE_COMPL, result=self.__request_data)
+                                self.__request_data = None
 
 
     class CtlPortSubProtocol(NodeProtocol):
@@ -530,7 +649,7 @@ class EntangleAndMeasure(NodeProtocol):
                     self.__complete_pairs += 1
 
                     # logger.info("%s::%s::MSR=%d", self.node.name, packet, results[-1][1])
-                    print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
+                    # print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
 
                 # Request complete book keeping
                 self.__complete_pairs = None

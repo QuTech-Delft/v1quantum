@@ -1,7 +1,10 @@
 """Generate scenario files."""
 
+import argparse
+import enum
 import os
 import shutil
+import tempfile
 import yaml
 
 from netsquid_netrunner import generators
@@ -9,8 +12,12 @@ from netsquid_netrunner import generators
 
 CTL_PORT = 0x200
 
+class ExperimentType(str, enum.Enum):
+    QRX = "qrx"
+    HUB = "hub"
 
-def experiment_topology(network: generators.network.Topology):
+
+def qrx_topology(network: generators.network.Topology):
     """Generate the experiment topology.
 
     Parameters
@@ -205,7 +212,7 @@ def experiment_topology(network: generators.network.Topology):
     ))
 
 
-def generate_network(config_dir, scenario_path):
+def generate_qrx_network(config_dir, scenario_path):
     """Generate the network configuration file.
 
     Parameters
@@ -216,15 +223,61 @@ def generate_network(config_dir, scenario_path):
         The path for scenario for which to generate the demand.
 
     """
+    network_config_file = os.path.join(scenario_path, "network.yml")
     topology = generators.network.Topology(
         base_file=os.path.join(config_dir, "network_base.yml"),
-        network_config_file=os.path.join(scenario_path, "network.yml"),
+        network_config_file=network_config_file,
     )
-    experiment_topology(topology)
+    qrx_topology(topology)
     topology.generate()
+    return network_config_file
 
 
-def generate_demand(config_dir, scenario_path):
+def generate_hub_network(config_dir, scenario_path, num_bsm_units, num_spokes):
+    """Generate the network configuration file for a HUB experiment.
+
+    Parameters
+    ----------
+    config_dir : `str`
+        The directory with base configuration.
+    scenario_path : `str`
+        The path for scenario for which to generate the demand.
+    num_bsm_units : `int`
+        The number of BSM units at the heralding station.
+    num_spokes : `int`
+        The number of arms in the star topology.
+
+    """
+    network_config_file = os.path.join(scenario_path, "network.yml")
+    topology = generators.network.Topology(
+        base_file=os.path.join(config_dir, "network_base.yml"),
+        network_config_file=network_config_file,
+    )
+    generators.topologies.star.main(topology, num_bsm_units, num_spokes)
+
+    topology.add_controller()
+    topology.connect(topology.Link(
+        c1_name="controller", c1_port="qhs",
+        c2_name="qhs", c2_port=CTL_PORT,
+        connection_properties={"length": 0},
+    ))
+    for spoke in range(1, num_spokes+1):
+        topology.connect(topology.Link(
+            c1_name="controller", c1_port=f"h{spoke}",
+            c2_name=f"h{spoke}", c2_port=CTL_PORT,
+        ))
+        for spoke2 in range(spoke+1, num_spokes+1):
+            topology.connect(topology.Link(
+                c1_name=f"h{spoke}", c1_port=f"h{spoke2}",
+                c2_name=f"h{spoke2}", c2_port=f"h{spoke}",
+                connection_properties={"length": 50},
+            ))
+
+    topology.generate()
+    return network_config_file
+
+
+def generate_demand(config_dir, scenario_path, demand_base_file=None):
     """Generate the demand matrix.
 
     Parameters
@@ -235,41 +288,34 @@ def generate_demand(config_dir, scenario_path):
         The path for scenario for which to generate the demand.
 
     """
+    if demand_base_file is None:
+        demand_base_file = os.path.join(config_dir, "demand_base.yml")
     with open(os.path.join(scenario_path, "network.yml"), encoding="utf-8") as network_config_file:
         network_config = yaml.safe_load(network_config_file)
+    demand_file = os.path.join(scenario_path, "demand.yml")
     generators.demand.generate(
-        base_file=os.path.join(config_dir, "demand_base.yml"),
-        demand_file=os.path.join(scenario_path, "demand.yml"),
+        base_file=demand_base_file,
+        demand_file=demand_file,
         network_config=network_config,
     )
+    return demand_file
 
 
-def generate_scenarios(config_dir, scenario_dir):
-    """Generate scenario files.
+def generate_scenario(config_dir, scenario_path, experiment_type, demand_file=None):
+    """Generate the scenario file.
 
     Parameters
     ----------
     config_dir : `str`
         The directory with base configuration.
-    scenario_dir : `str`
-        The root directory for scenario files.
+    scenario_path : `str`
+        The path for scenario for which to generate the demand.
+    experiment_type : `v1quantum.generate.ExperimentType`
+        The type of experiment to generate.
+    demand_file : `str`
+        The path to the demand file if a non-default one should be used.
 
     """
-    try:
-        shutil.rmtree(scenario_dir)
-    except FileNotFoundError:
-        pass
-    os.makedirs(scenario_dir)
-
-    # Set up the path for this scenario.
-    scenario_path = os.path.join(scenario_dir, "scenario-0")
-    os.mkdir(scenario_path)
-
-    # Generate network and demand config files first.
-    generate_network(config_dir, scenario_path)
-    generate_demand(config_dir, scenario_path)
-
-    # Create scenario dict
     scenario = {
         "config_path": scenario_path,
         "type_config_file": os.path.relpath(
@@ -278,10 +324,12 @@ def generate_scenarios(config_dir, scenario_dir):
         ),
         "network_config_file": "network.yml",
         "protocol_config_file": os.path.relpath(
-            os.path.join(config_dir, "protocol.yml"),
+            os.path.join(config_dir, f"protocol_{experiment_type}.yml"),
             scenario_path,
         ),
-        "demand_config_file": "demand.yml",
+        "demand_config_file": ("demand.yml" if demand_file is None else
+                               os.path.relpath(demand_file, scenario_path)),
+        "runner_config_file": "runner.yml" if experiment_type == ExperimentType.HUB else None,
     }
 
     # And dump the scenario file
@@ -290,9 +338,112 @@ def generate_scenarios(config_dir, scenario_dir):
         yaml.dump(scenario, scenario_file, sort_keys=False)
 
 
+def generate_runner_config(scenario_path, experiment_type):
+    """Generate a runall config file.
+
+    Parameters
+    ----------
+    scenario_path : `str`
+        The path for scenario for which to generate the runall config.
+    experiment_type : `v1quantum.generate.ExperimentType`
+        The type of experiment to generate.
+
+    """
+    if experiment_type == ExperimentType.HUB:
+        runner_config = {
+            "time_limit": 10 * (10 ** 9),
+        }
+        runner_config_filepath = os.path.join(scenario_path, "runner.yml")
+        with open(runner_config_filepath, "w", encoding="utf-8") as yaml_file:
+            yaml.dump(runner_config, yaml_file, sort_keys=False)
+
+
+def generate_experiment(config_dir, scenario_dir, experiment_type):
+    """Generate scenario files.
+
+    Parameters
+    ----------
+    config_dir : `str`
+        The directory with base configuration.
+    scenario_dir : `str`
+        The root directory for scenario files.
+    experiment_type : `v1quantum.generate.ExperimentType`
+        The type of experiment to generate.
+
+    """
+    try:
+        shutil.rmtree(scenario_dir)
+    except FileNotFoundError:
+        pass
+    os.makedirs(scenario_dir)
+
+    if experiment_type == ExperimentType.QRX:
+        # Set up the path for this scenario.
+        scenario_path = os.path.join(scenario_dir, "scenario-0")
+        os.mkdir(scenario_path)
+
+        generate_qrx_network(config_dir, scenario_path)
+        generate_demand(config_dir, scenario_path)
+        generate_scenario(config_dir, scenario_path, experiment_type)
+    else:
+        assert experiment_type == ExperimentType.HUB
+
+        BSM_UNITS = [1, 2, 4, 8, 16]
+        SPOKES = [64]
+        INTERVALS = [1_024_000_000, 512_000_000, 256_000_000, 128_000_000, 64_000_000, 32_000_000,
+                     16_000_000, 8_000_000, 4_000_000, 2_000_000, 1_000_000]
+
+        for num_spokes in SPOKES:
+            for interval in INTERVALS:
+                with open(os.path.join(config_dir, "demand_base.yml"), encoding="utf-8") as \
+                     demand_base_file:
+                    demand_base = yaml.safe_load(demand_base_file)
+
+                with tempfile.NamedTemporaryFile(mode="w") as demand_base_file:
+                    demand_base["matrix"]["requests_until"] = 10 * (10 ** 9)
+                    demand_base["matrix"]["start_time"]["interval"] = interval
+                    yaml.dump(demand_base, demand_base_file, sort_keys=False)
+                    demand_base_file.flush()
+
+                    demand_file = None
+
+                    for num_bsm_units in BSM_UNITS:
+                        scenario_path = os.path.join(
+                            scenario_dir,
+                            "scenario"
+                            f"---spokes-{num_spokes:03}"
+                            f"---interval-{interval:010}"
+                            f"---bsm-units-{num_bsm_units:02}",
+                        )
+                        os.mkdir(scenario_path)
+
+                        generate_hub_network(config_dir, scenario_path, num_bsm_units, num_spokes)
+
+                        if demand_file is None:
+                            demand_file = generate_demand(
+                                config_dir,
+                                scenario_path,
+                                demand_base_file.name,
+                            )
+
+                        generate_scenario(config_dir, scenario_path, experiment_type, demand_file)
+                        generate_runner_config(scenario_path, experiment_type)
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate a v1quantum experiment")
+    parser.add_argument(
+        "--experiment-type",
+        type=str.lower,
+        choices=[str.lower(t) for t in ExperimentType],
+        default="qrx",
+        help="experiment type",
+    )
+    args = parser.parse_args()
+
     ROOT_DIR = "./"
-    generate_scenarios(
+    generate_experiment(
         config_dir=os.path.join(ROOT_DIR, "config"),
         scenario_dir=os.path.join(ROOT_DIR, "scenario"),
+        experiment_type=args.experiment_type,
     )
