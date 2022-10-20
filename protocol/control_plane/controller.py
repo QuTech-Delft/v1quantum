@@ -282,7 +282,9 @@ class Controller(NodeProtocol):
                 self._pending[message.remote][message.request_id].request_id
 
             if message.msg_type == QcpOp.OP_RSRV:
-                self._reserve_queue[tuple(sorted((message.source, message.remote)))] = message
+                rsrv_id = (message.request_id, *sorted((message.source, message.remote)))
+                assert rsrv_id not in self._reserve_queue
+                self._reserve_queue[rsrv_id] = message
             else:
                 assert message.msg_type == QcpOp.OP_FREE
                 self._release_queue.append(message)
@@ -372,6 +374,7 @@ class Controller(NodeProtocol):
         while self._release_queue:
             message = self._release_queue.pop()
             pair = tuple(sorted((message.source, message.remote)))
+            rsrv_id = (message.request_id, *pair)
 
             if message.request_id in self._active:
                 assert pair == self._active[message.request_id].pair
@@ -379,9 +382,9 @@ class Controller(NodeProtocol):
                 # until it finishes installing as otherwise we won't have the handles.
                 self._release(message)
 
-            elif pair in self._reserve_queue:
+            elif rsrv_id in self._reserve_queue:
                 # Circuit is not active, but is queued up. Remove it from the queue.
-                del self._reserve_queue[pair]
+                del self._reserve_queue[rsrv_id]
                 self._notify(message)
 
             else:
@@ -694,32 +697,31 @@ class Controller(NodeProtocol):
 class HubController(Controller):
 
     def __init__(self, node, *_args, **_kwargs):
+        self.__hosts = set()
         super().__init__(node, *_args, **_kwargs)
         self.__bsm_grp_id_set = set(range(
-            0,
-            self.node.network_config["components"]["qhs"]["properties"]["num_bsm_units"],
+            self.node.network_config["components"]["qhs"]["properties"]["num_bsm_units"]
         ))
 
     def _route_computation(self):
         self._routing: Routing = Routing()
 
         num_heralding_stations = 0
-        num_spokes = 0
         for component, properties in self.node.network_config["components"].items():
             if properties["type"] == "heralding_station":
                 assert component == "qhs"
                 num_heralding_stations += 1
             elif properties["type"] == "host":
-                num_spokes += 1
+                self.__hosts.add(component)
             else:
                 assert properties["type"] in set(
                     ["controller", "classical_connection", "quantum_connection"]
                 )
 
         assert num_heralding_stations == 1
-        assert num_spokes >= 2
+        assert len(self.__hosts) >= 2
 
-        topologies.star.main(self._routing, 0, num_spokes)
+        topologies.star.main(self._routing, 0, len(self.__hosts))
         self._routing.compute_routes()
 
     def _assign_bsm_grp_id(self, _node):
@@ -734,6 +736,10 @@ class HubController(Controller):
         while self._release_queue:
             message = self._release_queue.pop()
             pair = tuple(sorted((message.source, message.remote)))
+            rsrv_id = (message.request_id, *pair)
+
+            assert pair[0] not in self.__hosts
+            assert pair[1] not in self.__hosts
 
             if message.request_id in self._active:
                 assert pair == self._active[message.request_id].pair
@@ -741,16 +747,32 @@ class HubController(Controller):
                 # until it finishes installing as otherwise we won't have the handles.
                 self._release(message)
 
-            elif pair in self._reserve_queue:
+            elif rsrv_id in self._reserve_queue:
                 # Circuit is not active, but is queued up. Remove it from the queue.
-                del self._reserve_queue[pair]
+                del self._reserve_queue[rsrv_id]
                 self._notify(message)
 
             else:
                 # Log any leftover releases. This shouldn't happen if the nodes are behaving.
                 logger.warning("No match for RELEASE of %s", pair)
 
+            self.__hosts.add(pair[0])
+            self.__hosts.add(pair[1])
+
         # And finally, if there is no active circuit, install the next one that is queued up.
         while self._reserve_queue and self.__bsm_grp_id_set:
-            _, message = self._reserve_queue.popitem()
-            self._reserve(message)
+            next_rsrv_id = None
+
+            for rsrv_id, message in self._reserve_queue.items():
+                pair = (rsrv_id[1], rsrv_id[2])
+                if (pair[0] in self.__hosts) and (pair[1] in self.__hosts):
+                    next_rsrv_id = rsrv_id
+                    self.__hosts.remove(pair[0])
+                    self.__hosts.remove(pair[1])
+                    self._reserve(message)
+                    break
+
+            if next_rsrv_id is None:
+                break
+
+            del self._reserve_queue[next_rsrv_id]

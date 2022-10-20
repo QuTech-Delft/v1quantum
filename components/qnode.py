@@ -259,17 +259,18 @@ class HeraldingProtocol(NodeProtocol):
             yield self.await_port_input(self.__clport)
             msg = self.__clport.rx_input()
             assert msg is not None
-            assert len(msg.items) == 1
+            assert msg.items is not None
 
-            # A NewBsmGroup message means we need reset the protocol.
-            if msg.items[0].__class__.__name__ == "NewBsmGroup":
-                self.__new_bsm_group()
-                return
+            for item in msg.items:
+                # A NewBsmGroup message means we need reset the protocol.
+                if item.__class__.__name__ == "NewBsmGroup":
+                    self.__new_bsm_group()
+                    return
 
-            # Otherwise we expect an EntParams.
-            assert msg.items[0].__class__.__name__ == "EntParams"
-            generator = ExcitedPairPreparation()
-            alpha = msg.items[0].alpha
+                # Otherwise we expect an EntParams.
+                assert msg.items[0].__class__.__name__ == "EntParams"
+                generator = ExcitedPairPreparation()
+                alpha = msg.items[0].alpha
 
             # Start the main attempt loop until a success is received.
             while True:
