@@ -90,13 +90,19 @@ class EntangleAndMeasure(NodeProtocol):
         self.__current_request_id = None
         self.__current_remote_id = None
         self.__reattempts = {}
-        self.__requests = Queue()
+        self.__pending_requests = Queue()
+        self.__active_requests = Queue()
+        self.__num_active_requests = 0
+        self.__max_active_requests = 3
         self.__results = {}
 
     def print_status(self):
         """Print the current status of this protocol."""
         if self.current_request_id is None:
-            print(f"{self.node.name} :: IDLE")
+            if self.__num_active_requests == 0:
+                print(f"{self.node.name} :: IDLE")
+            else:
+                print(f"{self.node.name} :: PENDING : {self.__num_active_requests}")
         else:
             print(f"{self.node.name} :: req{self.node.protocol.current_request_id} -- "
                   f"{self.node.name}-{self.node.protocol.current_remote_id} : "
@@ -189,9 +195,9 @@ class EntangleAndMeasure(NodeProtocol):
         """
         event = self._schedule_after(delay, EventType("ENQUEUE_REQUEST", "enqueue_request"))
         self.__reattempts[event.id] = request_data
-        self._wait_once(EventHandler(self.reattempt_enqueue_request), entity=self, event=event)
+        self._wait_once(EventHandler(self.reattempt_request), entity=self, event=event)
 
-    def reattempt_enqueue_request(self, event):
+    def reattempt_request(self, event):
         """Insert the request into the local store.
 
         Parameters
@@ -201,7 +207,34 @@ class EntangleAndMeasure(NodeProtocol):
 
         """
         request_data = self.__reattempts.pop(event.id)
-        self.enqueue_request(request_data)
+        self.enqueue_active(request_data)
+
+    def activate_request(self, request_data):
+        """Insert the request into the local store.
+
+        Parameters
+        ----------
+        request_data : `qp4_simulations.host.app.Request`
+            The request.
+
+        """
+        # Allow for one more active request than max for a request accepted from another host.
+        assert self.__num_active_requests <= self.__max_active_requests
+        self.__num_active_requests += 1
+        self.enqueue_active(request_data)
+
+    def enqueue_active(self, request_data):
+        """Insert the request into the local store.
+
+        Parameters
+        ----------
+        request_data : `qp4_simulations.host.app.Request`
+            The request.
+
+        """
+        self.__active_requests.put(request_data)
+        if self.__active_requests.qsize() == 1:
+            self.send_signal(Signals.RESTART)
 
     def enqueue_request(self, request_data):
         """Insert the request into the local store.
@@ -212,8 +245,8 @@ class EntangleAndMeasure(NodeProtocol):
             The request.
 
         """
-        self.__requests.put(request_data)
-        if self.__requests.qsize() == 1:
+        self.__pending_requests.put(request_data)
+        if self.__pending_requests.qsize() == 1:
             self.send_signal(Signals.RESTART)
 
     def is_idle(self):
@@ -240,12 +273,16 @@ class EntangleAndMeasure(NodeProtocol):
         self.start_subprotocols()
 
         while True:
-            if self.__requests.empty():
+            # Next request must come from the active queue if it is not empty.
+            if not self.__active_requests.empty():
+                request_data = self.__active_requests.get()
+            elif not self.__pending_requests.empty() and \
+                 (self.__num_active_requests < self.__max_active_requests):
+                self.activate_request(self.__pending_requests.get())
+                continue
+            else:
                 yield self.await_signal(self, Signals.RESTART)
-
-            # Get the next request
-            assert not self.__requests.empty()
-            request_data = self.__requests.get()
+                continue
             request = request_data.request
 
             assert request.request_id not in self.__results
@@ -311,6 +348,8 @@ class EntangleAndMeasure(NodeProtocol):
             # Reset current request ID
             self.__current_request_id = None
             self.__current_remote_id = None
+            self.__num_active_requests -= 1
+            assert self.__num_active_requests >= 0
 
     class HandshakeSubProtocol(NodeProtocol):
         """The inter-host handshake subprotocol.
@@ -378,7 +417,7 @@ class EntangleAndMeasure(NodeProtocol):
                     results=EntangleAndMeasure.RequestResults(request_time=ns.sim_time()),
                     remote_ready=True,
                 )
-                self.__parent.enqueue_request(request_data)
+                self.__parent.activate_request(request_data)
                 handshake.remote_ready = True
             else:
                 handshake.remote_ready = False
@@ -416,7 +455,8 @@ class EntangleAndMeasure(NodeProtocol):
                                 assert handshake.request.node0 == self.node.name
                                 self.__process_local_origin_handshake(handshake)
 
-                                self.send_signal(Signals.HANDSHAKE_COMPL, result=self.__request_data)
+                                self.send_signal(
+                                    Signals.HANDSHAKE_COMPL, result=self.__request_data)
                                 self.__request_data = None
 
 
