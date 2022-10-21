@@ -702,6 +702,7 @@ class HubController(Controller):
         self.__bsm_grp_id_set = set(range(
             self.node.network_config["components"]["qhs"]["properties"]["num_bsm_units"]
         ))
+        self.__reserved_hosts = {}
 
     def _route_computation(self):
         self._routing: Routing = Routing()
@@ -732,7 +733,15 @@ class HubController(Controller):
         self.__bsm_grp_id_set.add(bsm_grp_id)
 
     def _reserve_release(self):
-        # First process the releases.
+        # Release the hosts that are no longer active.
+        active_cids = set(self._active.keys()) | set(self._installing.keys())
+        free_cids = set(self.__reserved_hosts.keys()) - active_cids
+        for cid in free_cids:
+            pair = self.__reserved_hosts.pop(cid)
+            self.__hosts.add(pair[0])
+            self.__hosts.add(pair[1])
+
+        # Process the releases.
         while self._release_queue:
             message = self._release_queue.pop()
             pair = tuple(sorted((message.source, message.remote)))
@@ -756,9 +765,6 @@ class HubController(Controller):
                 # Log any leftover releases. This shouldn't happen if the nodes are behaving.
                 logger.warning("No match for RELEASE of %s", pair)
 
-            self.__hosts.add(pair[0])
-            self.__hosts.add(pair[1])
-
         # And finally, if there is no active circuit, install the next one that is queued up.
         while self._reserve_queue and self.__bsm_grp_id_set:
             next_rsrv_id = None
@@ -767,8 +773,14 @@ class HubController(Controller):
                 pair = (rsrv_id[1], rsrv_id[2])
                 if (pair[0] in self.__hosts) and (pair[1] in self.__hosts):
                     next_rsrv_id = rsrv_id
+
                     self.__hosts.remove(pair[0])
                     self.__hosts.remove(pair[1])
+
+                    assert rsrv_id[0] == message.request_id
+                    assert rsrv_id[0] not in self.__reserved_hosts
+                    self.__reserved_hosts[rsrv_id[0]] = pair
+
                     self._reserve(message)
                     break
 
