@@ -401,7 +401,7 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
                     demand_base = yaml.safe_load(demand_base_file)
 
                 with tempfile.NamedTemporaryFile(mode="w") as demand_base_file:
-                    demand_base["matrix"]["requests_until"] = 10 * (10 ** 9)
+                    demand_base["matrix"]["requests_until"] = 105 * (10 ** 9)
                     demand_base["matrix"]["start_time"]["interval"] = interval
                     yaml.dump(demand_base, demand_base_file, sort_keys=False)
                     demand_base_file.flush()
