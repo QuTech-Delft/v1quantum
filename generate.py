@@ -351,7 +351,7 @@ def generate_runner_config(scenario_path, experiment_type):
     """
     if experiment_type == ExperimentType.HUB:
         runner_config = {
-            "time_limit": 10 * (10 ** 9),
+            "time_limit": 105 * (10 ** 9),
         }
         runner_config_filepath = os.path.join(scenario_path, "runner.yml")
         with open(runner_config_filepath, "w", encoding="utf-8") as yaml_file:
@@ -388,10 +388,11 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
     else:
         assert experiment_type == ExperimentType.HUB
 
-        BSM_UNITS = [1, 2, 4, 8, 16]
-        SPOKES = [64]
-        INTERVALS = [1_024_000_000, 512_000_000, 256_000_000, 128_000_000, 64_000_000, 32_000_000,
-                     16_000_000, 8_000_000, 4_000_000, 2_000_000, 1_000_000]
+        BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        SPOKES = [32]
+        INTERVALS = [10_000_000, 20_000_000, 50_000_000,
+                     100_000_000, 200_000_000, 500_000_000,
+                     1_000_000_000]
 
         for num_spokes in SPOKES:
             for interval in INTERVALS:
