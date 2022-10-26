@@ -388,8 +388,8 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
     else:
         assert experiment_type == ExperimentType.HUB
 
-        BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-        SPOKES = [32]
+        BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8]
+        SPOKES = [16]
         INTERVALS = [10_000_000, 20_000_000, 50_000_000,
                      100_000_000, 200_000_000, 500_000_000,
                      1_000_000_000]
