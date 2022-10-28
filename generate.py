@@ -390,9 +390,25 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
 
         BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8]
         SPOKES = [16]
-        INTERVALS = [10_000_000, 20_000_000, 50_000_000,
-                     100_000_000, 200_000_000, 500_000_000,
-                     1_000_000_000]
+        INTERVALS = [
+            10_000_000,         # 100
+            20_000_000,         # 50
+            25_000_000,         # 40
+            33_333_333,         # 30
+            40_000_000,         # 25
+            50_000_000,         # 20
+            55_555_556,         # 18
+            62_500_000,         # 16
+            71_428_571,         # 14
+            83_333_333,         # 12
+            100_000_000,        # 10
+            125_000_000,        # 8
+            166_666_667,        # 6
+            200_000_000,        # 5
+            250_000_000,        # 4
+            500_000_000,        # 2
+            1_000_000_000,      # 1
+        ]
 
         for num_spokes in SPOKES:
             for interval in INTERVALS:
@@ -426,6 +442,10 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
                                 scenario_path,
                                 demand_base_file.name,
                             )
+                        else:
+                            new_demand_file = os.path.join(scenario_path, "demand.yml")
+                            shutil.copyfile(demand_file, new_demand_file)
+                            demand_file = new_demand_file
 
                         generate_scenario(config_dir, scenario_path, experiment_type, demand_file)
                         generate_runner_config(scenario_path, experiment_type)
