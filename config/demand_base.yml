@@ -1,7 +1,7 @@
 netsquid_random_state_seed: random
 
 matrix:
-  requests_until: 105000000000
+  requests_until: null
   parameters:
     num_pairs:
       type: int

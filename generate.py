@@ -270,7 +270,7 @@ def generate_hub_network(config_dir, scenario_path, num_bsm_units, num_spokes):
             topology.connect(topology.Link(
                 c1_name=f"h{spoke}", c1_port=f"h{spoke2}",
                 c2_name=f"h{spoke2}", c2_port=f"h{spoke}",
-                connection_properties={"length": 50},
+                connection_properties={"length": 10},
             ))
 
     topology.generate()
@@ -351,7 +351,7 @@ def generate_runner_config(scenario_path, experiment_type):
     """
     if experiment_type == ExperimentType.HUB:
         runner_config = {
-            "time_limit": 105 * (10 ** 9),
+            "time_limit": 2 * (10 ** 9),
         }
         runner_config_filepath = os.path.join(scenario_path, "runner.yml")
         with open(runner_config_filepath, "w", encoding="utf-8") as yaml_file:
@@ -391,23 +391,18 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
         BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8]
         SPOKES = [16]
         INTERVALS = [
+            1_666_667,          # 600
+            1_818_182,          # 550
+            2_000_000,          # 500
+            2_222_222,          # 450
+            2_500_000,          # 400
+            2_857_143,          # 350
+            3_333_333,          # 300
+            4_000_000,          # 250
+            5_000_000,          # 200
+            6_666_667,          # 150
             10_000_000,         # 100
             20_000_000,         # 50
-            25_000_000,         # 40
-            33_333_333,         # 30
-            40_000_000,         # 25
-            50_000_000,         # 20
-            55_555_556,         # 18
-            62_500_000,         # 16
-            71_428_571,         # 14
-            83_333_333,         # 12
-            100_000_000,        # 10
-            125_000_000,        # 8
-            166_666_667,        # 6
-            200_000_000,        # 5
-            250_000_000,        # 4
-            500_000_000,        # 2
-            1_000_000_000,      # 1
         ]
 
         for num_spokes in SPOKES:
@@ -417,7 +412,7 @@ def generate_experiment(config_dir, scenario_dir, experiment_type):
                     demand_base = yaml.safe_load(demand_base_file)
 
                 with tempfile.NamedTemporaryFile(mode="w") as demand_base_file:
-                    demand_base["matrix"]["requests_until"] = 105 * (10 ** 9)
+                    demand_base["matrix"]["requests_until"] = 2 * (10 ** 9)
                     demand_base["matrix"]["start_time"]["interval"] = interval
                     yaml.dump(demand_base, demand_base_file, sort_keys=False)
                     demand_base_file.flush()

@@ -23,7 +23,7 @@ router:
 classical_connection:
   properties: &classical_fibre_properties
     connection_properties:
-      length: 25
+      length: 5
     delay_properties:
       c: 206753.41931034482
 
