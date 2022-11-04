@@ -5,8 +5,8 @@ import shutil
 def trim_results(results_root):
     for scenario in os.listdir(results_root):
         iterations = sorted(os.listdir(os.path.join(results_root, scenario)))
-        if len(iterations) > 2:
-            shutil.rmtree(os.path.join(results_root, scenario, iterations[2]))
+        for iter in iterations[1:]:
+            shutil.rmtree(os.path.join(results_root, scenario, iter))
 
 def clean_results(results_root):
     for scenario in os.listdir(results_root):
@@ -32,5 +32,5 @@ def clean_scenarios(scenario_root, scenarios):
 
 if __name__ == "__main__":
     clean_results("./results")
-    # trim_results("./results")
+    trim_results("./results")
     # clean_scenarios("./scenario", completed_scenarios("./results"))
