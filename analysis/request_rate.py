@@ -109,7 +109,7 @@ def save(fig, axis):
 
     plt.tight_layout(h_pad=-1, rect=(-0.01, 0.025, 1.01, 1.03))
     fig.set_size_inches(5, 7)
-    fig.savefig("./analysis/figs/request_rate.png")
+    fig.savefig("./analysis/figs/request_rate.pdf", dpi=300)
 
 
 if __name__ == "__main__":
