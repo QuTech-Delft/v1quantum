@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from netsquid.components.component import Component
 from netsquid.protocols import NodeProtocol
 from netsquid_p4.node import P4Node
-from netsquid_p4_v1quantum import V1QuantumDevice, BsmOutcome
 from netsquid_physlayer.detectors import BSMDetector
+
+from v1quantum.device import V1QuantumDevice, BsmOutcome
 
 
 class HeraldingStation(P4Node):

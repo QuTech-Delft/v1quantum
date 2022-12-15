@@ -9,11 +9,10 @@ from typing import DefaultDict, List, Dict, Tuple, Optional, Set
 from netsquid.protocols.nodeprotocols import NodeProtocol
 import networkx as nx
 from pydynaa import EventHandler, EventType
-from pyp4_v1quantum import BsmGroupEntry
 from netsquid_netrunner.generators.network import Topology
 from netsquid_netrunner.generators import topologies
 
-from generate import generate_qrx_network
+from experiments.base.generate import generate_qrx_network
 from protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
     BsmGrpDestroyMsg,
@@ -25,6 +24,7 @@ from protocol.control_plane.protocol import (
     TableInsertMsg,
     TableRemoveMsg,
 )
+from v1quantum.processor import BsmGroupEntry
 
 
 logger = logging.getLogger(__name__)

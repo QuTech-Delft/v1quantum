@@ -7,12 +7,12 @@ from netsquid.qubits import operators
 import netsquid as ns
 from netsquid_physlayer.pair_preparation import ExcitedPairPreparation
 from pydynaa import EventHandler, EventType
-from pyp4_v1quantum import V1QuantumBellIndex
 from netsquid_p4.node import P4Node
-from netsquid_p4_v1quantum import V1QuantumDevice, BsmOutcome
 
 from components.heralding_station import QNodeReady
 from util.rtt import RttProtocol
+from v1quantum.device import V1QuantumDevice, BsmOutcome
+from v1quantum.processor import V1QuantumBellIndex
 
 
 class QNode(P4Node):

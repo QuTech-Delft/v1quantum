@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, List
 
-from pyp4_v1quantum import BsmGroupEntry
+from v1quantum.processor import BsmGroupEntry
 
 
 class QcpOp(Enum):

@@ -5,17 +5,16 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
 import logging
-from queue import Queue
 from typing import Optional
 
 from netsquid_netrunner.loaders.demand import NetworkApp
 from netsquid.protocols import NodeProtocol
 import netsquid as ns
-from pydynaa import EventType, EventHandler
-from pyp4_v1quantum import V1QuantumBellIndex
+from pydynaa import EventType
 
 from protocol.control_plane.agent import Agent
 from protocol.control_plane.protocol import QcpMsg, QcpOp, RequestMsg
+from v1quantum.processor import V1QuantumBellIndex
 
 
 CTL_PORT = 0x200

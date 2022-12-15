@@ -4,4 +4,4 @@ results/**
 results*.tar
 results*.tar.gz
 scenario
-analysis/figs/**
+**/figs/**
