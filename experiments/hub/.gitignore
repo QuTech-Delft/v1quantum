@@ -1,0 +1,5 @@
+scenarios/**
+results/**
+netsquid.yml
+protocol.yml
+type.yml

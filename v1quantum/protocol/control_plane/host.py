@@ -8,7 +8,7 @@ import logging
 from typing import Optional
 
 from netsquid_netrunner.demand.application import Application as NetworkApp
-from netsquid.protocols import NodeProtocol
+from netsquid.protocols import NodeProtocol, protocol
 import netsquid as ns
 from pydynaa import EventType
 
@@ -78,9 +78,10 @@ class EntangleAndMeasure(NodeProtocol):
         if self.current_request_id is None:
             print(f"{self.node.name} :: IDLE")
         else:
-            print(f"{self.node.name} :: req{self.node.protocol.current_request_id} -- "
-                  f"{self.node.name}-{self.node.protocol.current_remote_id} : "
-                  f"{self.node.protocol.complete_pairs}/{self.node.protocol.num_pairs}")
+            protocol = self.node.netrunner_user_space
+            print(f"{self.node.name} :: req{protocol.current_request_id} -- "
+                  f"{self.node.name}-{protocol.current_remote_id} : "
+                  f"{protocol.complete_pairs}/{protocol.num_pairs}")
 
     @staticmethod
     def print_results(app0_results, app1_results):
@@ -507,7 +508,7 @@ class EntangleAndMeasure(NodeProtocol):
                     self.__complete_pairs += 1
 
                     # logger.info("%s::%s::MSR=%d", self.node.name, packet, results[-1][1])
-                    print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
+                    # print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
 
                 # Request complete book keeping
                 self.__complete_pairs = None

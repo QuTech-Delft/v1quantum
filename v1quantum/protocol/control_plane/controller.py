@@ -11,6 +11,7 @@ import networkx as nx
 from pydynaa import EventHandler, EventType
 from netsquid_netrunner.generators.network import LinkPort
 
+from experiments.hub.generate import topology as hub_topology
 from experiments.qrx.generate import topology as qrx_topology
 from v1quantum.protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
@@ -727,7 +728,7 @@ class HubController(Controller):
         assert num_heralding_stations == 1
         assert len(self.__hosts) >= 2
 
-        topologies.star.main(self._routing, 0, len(self.__hosts))
+        hub_topology(self._routing, 0, len(self.__hosts))
         self._routing.compute_routes()
 
     def _assign_bsm_grp_id(self, _node):

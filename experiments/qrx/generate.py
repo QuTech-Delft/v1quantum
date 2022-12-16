@@ -10,16 +10,13 @@ from netsquid_netrunner.generators.demand import DemandGenerator, ParameterDistr
 from netsquid_netrunner.generators.network import NetworkBase, NetworkGenerator, LinkPort
 import numpy.random
 
-from experiments.base.generate import CTL_PORT, network_base, generate_protocol, generate_type
-
-
-def connect_quantum(network, link_port_1, link_port_2):
-    for link in ["", "cl-", "qu-"]:
-        connect = network.connect_quantum if (link == "qu-") else network.connect_classical
-        connect(
-            LinkPort(comp=link_port_1.comp, port=f"{link}{link_port_1.port}"),
-            LinkPort(comp=link_port_2.comp, port=f"{link}{link_port_2.port}"),
-        )
+from experiments.base.generate import (
+    CTL_PORT,
+    connect_quantum,
+    generate_protocol,
+    generate_type,
+    network_base,
+)
 
 
 def generate_network():
@@ -226,21 +223,6 @@ def generate_demand():
     return demand
 
 
-def generate_scenario(scenario_path):
-    scenario = {
-        "config_path": scenario_path,
-        "demand_config_file": "demand.yml",
-        "network_config_file": "network.yml",
-        "protocol_config_file": "protocol.yml",
-        "type_config_file": "type.yml",
-    }
-
-    # And dump the scenario file
-    scenario_filepath = os.path.join(scenario_path, "scenario.yml")
-    with open(scenario_filepath, "w", encoding="utf-8") as scenario_file:
-        yaml.dump(scenario, scenario_file, sort_keys=False)
-
-
 def generate_experiment(scenario_dir):
     try:
         shutil.rmtree(scenario_dir)
@@ -266,7 +248,18 @@ def generate_experiment(scenario_dir):
     protocol.generate(os.path.join(scenario_path, "protocol.yml"))
     type.generate(os.path.join(scenario_path, "type.yml"))
 
-    generate_scenario(scenario_path)
+    scenario = {
+        "config_path": scenario_path,
+        "demand_config_file": "demand.yml",
+        "network_config_file": "network.yml",
+        "protocol_config_file": "protocol.yml",
+        "type_config_file": "type.yml",
+    }
+
+    # And dump the scenario file
+    scenario_filepath = os.path.join(scenario_path, "scenario.yml")
+    with open(scenario_filepath, "w", encoding="utf-8") as scenario_file:
+        yaml.dump(scenario, scenario_file, sort_keys=False)
 
 
 if __name__ == "__main__":
