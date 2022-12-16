@@ -9,10 +9,10 @@ from netsquid_physlayer.pair_preparation import ExcitedPairPreparation
 from pydynaa import EventHandler, EventType
 from netsquid_p4.node import P4Node
 
-from components.heralding_station import QNodeReady
-from util.rtt import RttProtocol
+from v1quantum.components.heralding_station import QNodeReady
 from v1quantum.device import V1QuantumDevice, BsmOutcome
 from v1quantum.processor import V1QuantumBellIndex
+from v1quantum.util.rtt import RttProtocol
 
 
 class QNode(P4Node):

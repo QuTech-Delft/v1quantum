@@ -1,7 +1,5 @@
 __pycache__
 *.pyc
-results/**
 results*.tar
 results*.tar.gz
-scenario
 **/figs/**

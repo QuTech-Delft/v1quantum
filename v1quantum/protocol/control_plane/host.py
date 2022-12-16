@@ -7,13 +7,13 @@ from functools import reduce
 import logging
 from typing import Optional
 
-from netsquid_netrunner.loaders.demand import NetworkApp
+from netsquid_netrunner.demand.application import Application as NetworkApp
 from netsquid.protocols import NodeProtocol
 import netsquid as ns
 from pydynaa import EventType
 
-from protocol.control_plane.agent import Agent
-from protocol.control_plane.protocol import QcpMsg, QcpOp, RequestMsg
+from v1quantum.protocol.control_plane.agent import Agent
+from v1quantum.protocol.control_plane.protocol import QcpMsg, QcpOp, RequestMsg
 from v1quantum.processor import V1QuantumBellIndex
 
 
@@ -150,7 +150,7 @@ class EntangleAndMeasure(NodeProtocol):
             The issued request.
 
         """
-        self.node.ports[new_request.node1].tx_output(deepcopy(new_request))
+        self.node.ports[new_request.host1].tx_output(deepcopy(new_request))
         self.enqueue_request(new_request)
 
     def enqueue_request(self, request):
@@ -202,11 +202,11 @@ class EntangleAndMeasure(NodeProtocol):
             The request.
 
         """
-        assert self.host == request.node0
+        assert self.host == request.host0
         msg = RequestMsg(
             msg_type=msg_type,
-            source=request.node0,
-            remote=request.node1,
+            source=request.host0,
+            remote=request.host1,
             request_id=request.request_id,
         )
         self.node.ports[str(CTL_PORT)].tx_output(msg)
@@ -241,11 +241,11 @@ class EntangleAndMeasure(NodeProtocol):
             request_data = self.__requests[reserve.request_id]
             request = request_data.request
 
-            assert reserve.source == request.node0
-            assert reserve.remote == request.node1
+            assert reserve.source == request.host0
+            assert reserve.remote == request.host1
 
             self.__current_request_id = request.request_id
-            self.__current_remote_id = request.node1
+            self.__current_remote_id = request.host1
 
             # Start time is the moment we start entangling.
             request_data.results.start_time = ns.sim_time()
@@ -253,7 +253,7 @@ class EntangleAndMeasure(NodeProtocol):
             # Entangle and measure
             entmsr_params = EntangleAndMeasure.EntMsrSubProtocol.Params(
                 request_id=request.request_id,
-                remote_id=request.node1,
+                remote_id=request.host1,
                 num_pairs=request.parameters["num_pairs"],
             )
             self.send_signal(Signals.ENTMSR_START, result=entmsr_params)
@@ -275,8 +275,8 @@ class EntangleAndMeasure(NodeProtocol):
 
             assert release.request_id == request.request_id
             assert release.source == self.host
-            assert release.source == request.node0
-            assert release.remote == request.node1
+            assert release.source == request.host0
+            assert release.remote == request.host1
 
             del self.__requests[release.request_id]
 
@@ -331,8 +331,8 @@ class EntangleAndMeasure(NodeProtocol):
 
                     assert msg.items is not None
                     for request in msg.items:
-                        assert request.node1 == self.__parent.host
-                        request.node0, request.node1 = request.node1, request.node0
+                        assert request.host1 == self.__parent.host
+                        request.host0, request.host1 = request.host1, request.host0
                         self.__parent.enqueue_request(request)
 
     class CtlPortSubProtocol(NodeProtocol):
@@ -507,7 +507,7 @@ class EntangleAndMeasure(NodeProtocol):
                     self.__complete_pairs += 1
 
                     # logger.info("%s::%s::MSR=%d", self.node.name, packet, results[-1][1])
-                    # print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
+                    print(f"{self.node.name}::{packet}::MSR={results[-1][1]}")
 
                 # Request complete book keeping
                 self.__complete_pairs = None

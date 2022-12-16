@@ -9,11 +9,10 @@ from typing import DefaultDict, List, Dict, Tuple, Optional, Set
 from netsquid.protocols.nodeprotocols import NodeProtocol
 import networkx as nx
 from pydynaa import EventHandler, EventType
-from netsquid_netrunner.generators.network import Topology
-from netsquid_netrunner.generators import topologies
+from netsquid_netrunner.generators.network import LinkPort
 
-from experiments.base.generate import generate_qrx_network
-from protocol.control_plane.protocol import (
+from experiments.qrx.generate import topology as qrx_topology
+from v1quantum.protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
     BsmGrpDestroyMsg,
     QcpMsg,
@@ -32,8 +31,6 @@ logger = logging.getLogger(__name__)
 
 class Routing:
     """Controller routing application."""
-
-    Link = Topology.Link
 
     def __init__(self):
         self.__graph: nx.Graph = nx.Graph()
@@ -109,16 +106,23 @@ class Routing:
         """Add a host to the graph."""
         self.__add_node(name)
 
-    def connect(self, link: Link) -> None:
-        """Add the provided link to the graph."""
-        if not link.quantum_link:
-            return
+    def connect_classical(self, *_args, **_kwargs) -> None:
+        return
 
-        self.__links[link.c1_name][link.c2_name] = link.c1_port
-        self.__links[link.c2_name][link.c1_name] = link.c2_port
-        self.__ports[link.c1_name][link.c1_port] = link.c2_name
-        self.__ports[link.c2_name][link.c2_port] = link.c1_name
-        self.__graph.add_edge(link.c1_name, link.c2_name)
+    def connect_quantum(
+            self,
+            link_port_1: LinkPort,
+            link_port_2: LinkPort,
+            _properties: Dict = None,
+    ) -> None:
+        """Add the provided link to the graph."""
+        port_1 = int(link_port_1.port[3:])
+        port_2 = int(link_port_2.port[3:])
+        self.__links[link_port_1.comp][link_port_2.comp] = port_1
+        self.__links[link_port_2.comp][link_port_1.comp] = port_2
+        self.__ports[link_port_1.comp][port_1] = link_port_2.comp
+        self.__ports[link_port_2.comp][port_2] = link_port_1.comp
+        self.__graph.add_edge(link_port_1.comp, link_port_2.comp)
 
     def compute_routes(self) -> None:
         """Compute the shortest paths for the current graph."""
@@ -216,14 +220,15 @@ class Controller(NodeProtocol):
 
     def _route_computation(self):
         self._routing: Routing = Routing()
-        generate_qrx_network(self._routing)
+        qrx_topology(self._routing)
         self._routing.compute_routes()
 
     def _assign_bsm_grp_id(self, _node):
         return 0
 
-    def _release_bsm_grp_id(self, _node, bsm_grp_id):
-        assert bsm_grp_id == 0
+    def _release_bsm_grp_id(self, node, bsm_grp_id):
+        if not node.startswith("qrx"):
+            assert bsm_grp_id == 0
 
     def __assign_rule_id(self):
         rule_id = self.__next_rule_id

@@ -5,7 +5,7 @@ from typing import Callable, Dict
 from netsquid.protocols.nodeprotocols import NodeProtocol
 from pyp4.table import Table
 
-from protocol.control_plane.protocol import (
+from v1quantum.protocol.control_plane.protocol import (
     BsmGrpCreateMsg,
     BsmGrpDestroyMsg,
     QcpMsg,
