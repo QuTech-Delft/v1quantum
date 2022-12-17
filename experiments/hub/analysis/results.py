@@ -34,7 +34,7 @@ class Request:
 @dataclasses.dataclass
 class Result:
     window: Tuple[float, float]
-    interval: int
+    rate: int
     bsm_units: int
     requests: Dict[str, List[Request]]
     throughput: MeasuredValue = None
@@ -48,12 +48,12 @@ def filter_requests(result_file, t0, t1):
     app_results = results["app_results"]
     requests = []
     for app_result in app_results:
-        if app_result["node0"] is not None:
-            assert app_result["node1"] is not None
+        if app_result["host0"] is not None:
+            assert app_result["host1"] is not None
             request = Request(
-                request_time=app_result["node0"]["request_time"],
-                start_time=app_result["node0"]["start_time"],
-                end_time=app_result["node0"]["end_time"],
+                request_time=app_result["host0"]["request_time"],
+                start_time=app_result["host0"]["start_time"],
+                end_time=app_result["host0"]["end_time"],
             )
             if (request.start_time >= t0) and (request.end_time <= t1):
                 requests.append(request)
@@ -84,10 +84,10 @@ def get_throughput_and_latency(result):
     return throughput, latency
 
 
-def calculate_request_cdf(results, interval, bsm_units, bin_times):
+def calculate_request_cdf(results, rate, bsm_units, bin_times):
     bins = [0] * len(bin_times)
 
-    requests = results[interval][bsm_units].requests
+    requests = results[rate][bsm_units].requests
     total_requests = 0
     for iter_requests in requests.values():
         total_requests += len(iter_requests)
@@ -108,19 +108,19 @@ def collect_results(results_root, window):
     spokes = None
     for result_dir in os.listdir(results_root):
         parsed = re.search(
-            "scenario---spokes-(\d+)---interval-(\d+)---bsm-units-(\d+)",
+            "scenario---spokes-(\d+)---rate-(\d+)---bsm-units-(\d+)",
             result_dir,
         ).groups()
         if spokes is None:
             spokes = int(parsed[0])
         else:
             assert spokes == int(parsed[0])
-        interval = int(parsed[1])
+        rate = int(parsed[1])
         bsm_units = int(parsed[2])
 
-        results[interval][bsm_units] = Result(
+        results[rate][bsm_units] = Result(
             window=window,
-            interval=interval,
+            rate=rate,
             bsm_units=bsm_units,
             requests={},
         )
@@ -132,13 +132,13 @@ def collect_results(results_root, window):
             result_file = os.path.join(results_root, result_dir, iteration, "results.json")
             requests = filter_requests(
                 result_file,
-                results[interval][bsm_units].window[0],
-                results[interval][bsm_units].window[1],
+                results[rate][bsm_units].window[0],
+                results[rate][bsm_units].window[1],
             )
-            results[interval][bsm_units].requests[result_file] = requests
+            results[rate][bsm_units].requests[result_file] = requests
 
-        throughput, latency = get_throughput_and_latency(results[interval][bsm_units])
-        results[interval][bsm_units].throughput = throughput
-        results[interval][bsm_units].latency = latency
+        throughput, latency = get_throughput_and_latency(results[rate][bsm_units])
+        results[rate][bsm_units].throughput = throughput
+        results[rate][bsm_units].latency = latency
 
     return results

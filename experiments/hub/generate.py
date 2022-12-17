@@ -23,8 +23,6 @@ from experiments.base.generate import (
 
 def generate_network(num_bsm_units, num_spokes):
     base: NetworkBase = network_base()
-    base.update_classical_connection({"length": 25})
-    base.update_quantum_connection({"length": 25})
     network = NetworkGenerator(base)
     topology(network, num_bsm_units, num_spokes)
     return network
@@ -65,11 +63,11 @@ def topology(network: NetworkGenerator, num_bsm_units, num_spokes):
 
 
 
-def generate_demand(time_limit, frequency):
+def generate_demand(time_limit, rate):
     demand = DemandGenerator()
     demand.set_requests_until(time_limit)
     demand.set_request_parameter("num_pairs", pd.normal(int, 50, 0))
-    demand.set_request_time_average_frequency(frequency)
+    demand.set_request_time_average_frequency(rate)
     return demand
 
 
@@ -89,7 +87,7 @@ def generate_experiment(experiment_dir):
     TIME_LIMIT = 2 * (10 ** 9)
     BSM_UNITS = [1, 2, 3, 4, 5, 6, 7, 8]
     SPOKES = [16]
-    FREQUENCY = [600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 50]
+    RATES = [600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100, 50]
     RNG = numpy.random.default_rng()
 
     netsquid: NetsquidGenerator = generate_netsquid(TIME_LIMIT)
@@ -107,9 +105,9 @@ def generate_experiment(experiment_dir):
     type.generate(type_file)
 
     for num_spokes in SPOKES:
-        for frequency in FREQUENCY:
+        for rate in RATES:
 
-            demand: DemandGenerator = generate_demand(TIME_LIMIT, frequency)
+            demand: DemandGenerator = generate_demand(TIME_LIMIT, rate)
             demand_file = tempfile.NamedTemporaryFile(mode="w").name
             demand.generate(
                 demand_file=demand_file,
@@ -122,7 +120,7 @@ def generate_experiment(experiment_dir):
                     scenario_dir,
                     "scenario"
                     f"---spokes-{num_spokes:03}"
-                    f"---frequency-{frequency:03}"
+                    f"---rate-{rate:03}"
                     f"---bsm-units-{num_bsm_units:02}",
                 )
                 os.mkdir(scenario_path)
