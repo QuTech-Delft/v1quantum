@@ -1,5 +1,6 @@
 import argparse
 from collections import defaultdict
+import os
 
 import matplotlib.pyplot as plt
 
@@ -108,6 +109,7 @@ def save(fig, axis):
 
     plt.tight_layout(h_pad=-1, rect=(-0.01, 0.025, 1.01, 1.03))
     fig.set_size_inches(5, 7)
+    os.makedirs("./experiments/hub/analysis/figs", exist_ok=True)
     fig.savefig("./experiments/hub/analysis/figs/request_rate.pdf", dpi=300)
 
 
