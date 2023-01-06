@@ -223,7 +223,9 @@ def generate_demand():
     return demand
 
 
-def generate_experiment(scenario_dir):
+def generate_experiment(experiment_dir):
+    scenario_dir = os.path.join(experiment_dir, "scenarios")
+
     try:
         shutil.rmtree(scenario_dir)
     except FileNotFoundError:
@@ -264,4 +266,4 @@ def generate_experiment(scenario_dir):
 
 if __name__ == "__main__":
     ROOT_DIR = "./experiments/qrx"
-    generate_experiment(os.path.join(ROOT_DIR, "scenarios"))
+    generate_experiment(ROOT_DIR)

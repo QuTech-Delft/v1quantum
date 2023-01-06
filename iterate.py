@@ -37,5 +37,5 @@ if __name__ == "__main__":
         results_dir = os.path.join(root_dir, "results")
 
         for _ in range(__args.iterations):
-            generate_module.generate_experiment(scenarios_dir)
+            generate_module.generate_experiment(root_dir)
             Experiment(scenarios_dir, results_dir).run()
