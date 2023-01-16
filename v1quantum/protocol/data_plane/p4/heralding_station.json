@@ -58,7 +58,7 @@
       ]
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 4,
       "fields" : [
         ["event_type", 32, false],
@@ -128,9 +128,9 @@
       "pi_omit" : true
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 3,
-      "header_type" : "qdevice_metadata",
+      "header_type" : "qcontrol_metadata",
       "metadata" : true,
       "pi_omit" : true
     },
@@ -218,11 +218,11 @@
       "name" : "PathWay",
       "entries" : [
         ["cnetwork", 0],
-        ["qdevice", 1]
+        ["qcontrol", 1]
       ]
     },
     {
-      "name" : "QDeviceOperation",
+      "name" : "QControlOperation",
       "entries" : [
         ["none", 0],
         ["release", 2],
@@ -230,7 +230,7 @@
       ]
     },
     {
-      "name" : "QDeviceEventType",
+      "name" : "QControlEventType",
       "entries" : [
         ["cnetwork", 2],
         ["heralding_bsm_outcome", 0],
@@ -290,7 +290,7 @@
   "counter_arrays" : [],
   "register_arrays" : [
     {
-      "name" : "xQDevice.r_bsm_grp_state_outcome_seq",
+      "name" : "xQControl.r_bsm_grp_state_outcome_seq",
       "id" : 0,
       "source_info" : {
         "filename" : "heralding_station.p4",
@@ -302,7 +302,7 @@
       "bitwidth" : 16
     },
     {
-      "name" : "xQDevice.r_bsm_grp_state_pair_seq",
+      "name" : "xQControl.r_bsm_grp_state_pair_seq",
       "id" : 1,
       "source_info" : {
         "filename" : "heralding_station.p4",
@@ -452,7 +452,7 @@
       "primitives" : []
     },
     {
-      "name" : "xQDevice.bsm_grp_state_read",
+      "name" : "xQControl.bsm_grp_state_read",
       "id" : 4,
       "runtime_data" : [],
       "primitives" : [
@@ -471,7 +471,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "bsm_id"]
+                    "value" : ["qcontrol_metadata", "bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -485,7 +485,7 @@
             "filename" : "heralding_station.p4",
             "line" : 144,
             "column" : 27,
-            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -497,7 +497,7 @@
             },
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_bsm_grp_state_outcome_seq"
+              "value" : "xQControl.r_bsm_grp_state_outcome_seq"
             },
             {
               "type" : "field",
@@ -526,7 +526,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "bsm_id"]
+                    "value" : ["qcontrol_metadata", "bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -540,7 +540,7 @@
             "filename" : "heralding_station.p4",
             "line" : 144,
             "column" : 27,
-            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -552,7 +552,7 @@
             },
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_bsm_grp_state_pair_seq"
+              "value" : "xQControl.r_bsm_grp_state_pair_seq"
             },
             {
               "type" : "field",
@@ -569,7 +569,7 @@
       ]
     },
     {
-      "name" : "xQDevice.bsm_grp_state_write",
+      "name" : "xQControl.bsm_grp_state_write",
       "id" : 5,
       "runtime_data" : [],
       "primitives" : [
@@ -588,7 +588,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "bsm_id"]
+                    "value" : ["qcontrol_metadata", "bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -602,7 +602,7 @@
             "filename" : "heralding_station.p4",
             "line" : 164,
             "column" : 28,
-            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -610,7 +610,7 @@
           "parameters" : [
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_bsm_grp_state_outcome_seq"
+              "value" : "xQControl.r_bsm_grp_state_outcome_seq"
             },
             {
               "type" : "field",
@@ -643,7 +643,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "bsm_id"]
+                    "value" : ["qcontrol_metadata", "bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -657,7 +657,7 @@
             "filename" : "heralding_station.p4",
             "line" : 164,
             "column" : 28,
-            "source_fragment" : "(bit<32>)qdevice_metadata.bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -665,7 +665,7 @@
           "parameters" : [
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_bsm_grp_state_pair_seq"
+              "value" : "xQControl.r_bsm_grp_state_pair_seq"
             },
             {
               "type" : "field",
@@ -686,7 +686,7 @@
       ]
     },
     {
-      "name" : "xQDevice.bsm_to_egp",
+      "name" : "xQControl.bsm_to_egp",
       "id" : 6,
       "runtime_data" : [
         {
@@ -757,14 +757,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_bell_index"]
+              "value" : ["qcontrol_metadata", "bsm_bell_index"]
             }
           ],
           "source_info" : {
             "filename" : "heralding_station.p4",
             "line" : 119,
             "column" : 8,
-            "source_fragment" : "hdr.egp.bell_index = qdevice_metadata.bsm_bell_index"
+            "source_fragment" : "hdr.egp.bell_index = qcontrol_metadata.bsm_bell_index"
           }
         },
         {
@@ -818,14 +818,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_id"]
+              "value" : ["qcontrol_metadata", "bsm_id"]
             }
           ],
           "source_info" : {
             "filename" : "heralding_station.p4",
             "line" : 125,
             "column" : 8,
-            "source_fragment" : "xconnect_metadata.bsm_grp = qdevice_metadata.bsm_id"
+            "source_fragment" : "xconnect_metadata.bsm_grp = qcontrol_metadata.bsm_id"
           }
         }
       ]
@@ -855,7 +855,7 @@
                       "op" : "==",
                       "left" : {
                         "type" : "field",
-                        "value" : ["qdevice_metadata", "event_type"]
+                        "value" : ["qcontrol_metadata", "event_type"]
                       },
                       "right" : {
                         "type" : "hexstr",
@@ -871,7 +871,7 @@
             "filename" : "heralding_station.p4",
             "line" : 141,
             "column" : 15,
-            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome"
+            "source_fragment" : "qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome"
           }
         },
         {
@@ -903,7 +903,7 @@
             "filename" : "heralding_station.p4",
             "line" : 141,
             "column" : 8,
-            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome)"
+            "source_fragment" : "assert(qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome)"
           }
         }
       ]
@@ -970,7 +970,7 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+            "source_fragment" : "qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
           }
         }
       ]
@@ -996,7 +996,7 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+            "source_fragment" : "qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
           }
         }
       ]
@@ -1015,14 +1015,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_id"]
+              "value" : ["qcontrol_metadata", "bsm_id"]
             }
           ],
           "source_info" : {
             "filename" : "heralding_station.p4",
             "line" : 154,
             "column" : 8,
-            "source_fragment" : "hdr.bsm_info.bsm_id = qdevice_metadata.bsm_id"
+            "source_fragment" : "hdr.bsm_info.bsm_id = qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -1079,14 +1079,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_bell_index"]
+              "value" : ["qcontrol_metadata", "bsm_bell_index"]
             }
           ],
           "source_info" : {
             "filename" : "heralding_station.p4",
             "line" : 157,
             "column" : 8,
-            "source_fragment" : "hdr.bsm_info.bell_index = qdevice_metadata.bsm_bell_index"
+            "source_fragment" : "hdr.bsm_info.bell_index = qcontrol_metadata.bsm_bell_index"
           }
         },
         {
@@ -1333,13 +1333,13 @@
       "conditionals" : []
     },
     {
-      "name" : "qdevice",
+      "name" : "qcontrol",
       "id" : 1,
       "source_info" : {
         "filename" : "heralding_station.p4",
         "line" : 94,
         "column" : 8,
-        "source_fragment" : "xQDevice"
+        "source_fragment" : "xQControl"
       },
       "init_table" : "tbl_heralding_station141",
       "tables" : [
@@ -1350,7 +1350,7 @@
             "filename" : "heralding_station.p4",
             "line" : 141,
             "column" : 8,
-            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome)"
+            "source_fragment" : "assert(qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome)"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1379,7 +1379,7 @@
             "filename" : "heralding_station.p4",
             "line" : 144,
             "column" : 8,
-            "source_fragment" : "bsm_grp_state_read((bit<32>)qdevice_metadata.bsm_id)"
+            "source_fragment" : "bsm_grp_state_read((bit<32>)qcontrol_metadata.bsm_id)"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1389,10 +1389,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [4],
-          "actions" : ["xQDevice.bsm_grp_state_read"],
+          "actions" : ["xQControl.bsm_grp_state_read"],
           "base_default_next" : "tbl_heralding_station147",
           "next_tables" : {
-            "xQDevice.bsm_grp_state_read" : "tbl_heralding_station147"
+            "xQControl.bsm_grp_state_read" : "tbl_heralding_station147"
           },
           "default_entry" : {
             "action_id" : 4,
@@ -1419,9 +1419,9 @@
           "direct_meters" : null,
           "action_ids" : [8],
           "actions" : ["heralding_station147"],
-          "base_default_next" : "xQDevice.bsm_tbl",
+          "base_default_next" : "xQControl.bsm_tbl",
           "next_tables" : {
-            "heralding_station147" : "xQDevice.bsm_tbl"
+            "heralding_station147" : "xQControl.bsm_tbl"
           },
           "default_entry" : {
             "action_id" : 8,
@@ -1431,7 +1431,7 @@
           }
         },
         {
-          "name" : "xQDevice.bsm_tbl",
+          "name" : "xQControl.bsm_tbl",
           "id" : 5,
           "source_info" : {
             "filename" : "heralding_station.p4",
@@ -1442,14 +1442,14 @@
           "key" : [
             {
               "match_type" : "exact",
-              "name" : "qdevice_metadata.bsm_id",
-              "target" : ["qdevice_metadata", "bsm_id"],
+              "name" : "qcontrol_metadata.bsm_id",
+              "target" : ["qcontrol_metadata", "bsm_id"],
               "mask" : null
             },
             {
               "match_type" : "exact",
-              "name" : "qdevice_metadata.bsm_success",
-              "target" : ["qdevice_metadata", "bsm_success"],
+              "name" : "qcontrol_metadata.bsm_success",
+              "target" : ["qcontrol_metadata", "bsm_success"],
               "mask" : null
             }
           ],
@@ -1460,10 +1460,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [6, 3],
-          "actions" : ["xQDevice.bsm_to_egp", "NoAction"],
+          "actions" : ["xQControl.bsm_to_egp", "NoAction"],
           "base_default_next" : "tbl_heralding_station154",
           "next_tables" : {
-            "xQDevice.bsm_to_egp" : "tbl_heralding_station154",
+            "xQControl.bsm_to_egp" : "tbl_heralding_station154",
             "NoAction" : "tbl_heralding_station154"
           },
           "default_entry" : {
@@ -1480,7 +1480,7 @@
             "filename" : "heralding_station.p4",
             "line" : 154,
             "column" : 28,
-            "source_fragment" : "= qdevice_metadata.bsm_id; ..."
+            "source_fragment" : "= qcontrol_metadata.bsm_id; ..."
           },
           "key" : [],
           "match_type" : "exact",
@@ -1509,7 +1509,7 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+            "source_fragment" : "qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1538,7 +1538,7 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
+            "source_fragment" : "qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1567,7 +1567,7 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 29,
-            "source_fragment" : "= (qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0); ..."
+            "source_fragment" : "= (qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0); ..."
           },
           "key" : [],
           "match_type" : "exact",
@@ -1596,7 +1596,7 @@
             "filename" : "heralding_station.p4",
             "line" : 164,
             "column" : 8,
-            "source_fragment" : "bsm_grp_state_write((bit<32>)qdevice_metadata.bsm_id)"
+            "source_fragment" : "bsm_grp_state_write((bit<32>)qcontrol_metadata.bsm_id)"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1606,10 +1606,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [5],
-          "actions" : ["xQDevice.bsm_grp_state_write"],
+          "actions" : ["xQControl.bsm_grp_state_write"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.bsm_grp_state_write" : null
+            "xQControl.bsm_grp_state_write" : null
           },
           "default_entry" : {
             "action_id" : 5,
@@ -1628,11 +1628,11 @@
             "filename" : "heralding_station.p4",
             "line" : 156,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.bsm_success"
+            "source_fragment" : "qcontrol_metadata.bsm_success"
           },
           "expression" : {
             "type" : "field",
-            "value" : ["qdevice_metadata", "bsm_success"]
+            "value" : ["qcontrol_metadata", "bsm_success"]
           },
           "true_next" : "tbl_heralding_station156",
           "false_next" : "tbl_heralding_station156_0"

@@ -47,7 +47,7 @@
       ]
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 3,
       "fields" : [
         ["event_type", 32, false],
@@ -109,9 +109,9 @@
       "pi_omit" : true
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 2,
-      "header_type" : "qdevice_metadata",
+      "header_type" : "qcontrol_metadata",
       "metadata" : true,
       "pi_omit" : true
     },
@@ -199,11 +199,11 @@
       "name" : "PathWay",
       "entries" : [
         ["cnetwork", 0],
-        ["qdevice", 1]
+        ["qcontrol", 1]
       ]
     },
     {
-      "name" : "QDeviceOperation",
+      "name" : "QControlOperation",
       "entries" : [
         ["none", 0],
         ["release", 2],
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "name" : "QDeviceEventType",
+      "name" : "QControlEventType",
       "entries" : [
         ["cnetwork", 2],
         ["heralding_bsm_outcome", 0],
@@ -421,7 +421,7 @@
             "filename" : "q-end-node.p4",
             "line" : 99,
             "column" : 12,
-            "source_fragment" : "xconnect_metadata.pathway = PathWay.qdevice"
+            "source_fragment" : "xconnect_metadata.pathway = PathWay.qcontrol"
           }
         }
       ]
@@ -502,7 +502,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qubit_release",
+      "name" : "xQControl.qubit_release",
       "id" : 4,
       "runtime_data" : [],
       "primitives" : [
@@ -511,7 +511,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "operation"]
+              "value" : ["qcontrol_metadata", "operation"]
             },
             {
               "type" : "hexstr",
@@ -522,7 +522,7 @@
             "filename" : "q-end-node.p4",
             "line" : 118,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+            "source_fragment" : "qcontrol_metadata.operation = QControlOperation.release"
           }
         },
         {
@@ -530,7 +530,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "release_qubit"]
+              "value" : ["qcontrol_metadata", "release_qubit"]
             },
             {
               "type" : "hexstr",
@@ -547,7 +547,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qubit_release",
+      "name" : "xQControl.qubit_release",
       "id" : 5,
       "runtime_data" : [],
       "primitives" : [
@@ -556,7 +556,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "operation"]
+              "value" : ["qcontrol_metadata", "operation"]
             },
             {
               "type" : "hexstr",
@@ -567,7 +567,7 @@
             "filename" : "q-end-node.p4",
             "line" : 118,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+            "source_fragment" : "qcontrol_metadata.operation = QControlOperation.release"
           }
         },
         {
@@ -575,7 +575,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "release_qubit"]
+              "value" : ["qcontrol_metadata", "release_qubit"]
             },
             {
               "type" : "hexstr",
@@ -592,7 +592,7 @@
       ]
     },
     {
-      "name" : "xQDevice.egp_to_qnp",
+      "name" : "xQControl.egp_to_qnp",
       "id" : 6,
       "runtime_data" : [
         {
@@ -904,7 +904,7 @@
       ]
     },
     {
-      "name" : "xQDevice.egp_to_cpu",
+      "name" : "xQControl.egp_to_cpu",
       "id" : 7,
       "runtime_data" : [],
       "primitives" : [
@@ -930,7 +930,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qnp_to_cpu",
+      "name" : "xQControl.qnp_to_cpu",
       "id" : 8,
       "runtime_data" : [
         {
@@ -1025,7 +1025,7 @@
                       "op" : "==",
                       "left" : {
                         "type" : "field",
-                        "value" : ["qdevice_metadata", "event_type"]
+                        "value" : ["qcontrol_metadata", "event_type"]
                       },
                       "right" : {
                         "type" : "hexstr",
@@ -1041,7 +1041,7 @@
             "filename" : "q-end-node.p4",
             "line" : 182,
             "column" : 19,
-            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.cnetwork"
+            "source_fragment" : "qcontrol_metadata.event_type == QControlEventType.cnetwork"
           }
         },
         {
@@ -1073,7 +1073,7 @@
             "filename" : "q-end-node.p4",
             "line" : 182,
             "column" : 12,
-            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.cnetwork)"
+            "source_fragment" : "assert(qcontrol_metadata.event_type == QControlEventType.cnetwork)"
           }
         }
       ]
@@ -1215,13 +1215,13 @@
       ]
     },
     {
-      "name" : "qdevice",
+      "name" : "qcontrol",
       "id" : 1,
       "source_info" : {
         "filename" : "q-end-node.p4",
         "line" : 111,
         "column" : 8,
-        "source_fragment" : "xQDevice"
+        "source_fragment" : "xQControl"
       },
       "init_table" : "node_8",
       "tables" : [
@@ -1232,7 +1232,7 @@
             "filename" : "q-end-node.p4",
             "line" : 182,
             "column" : 12,
-            "source_fragment" : "assert(qdevice_metadata.event_type == QDeviceEventType.cnetwork)"
+            "source_fragment" : "assert(qcontrol_metadata.event_type == QControlEventType.cnetwork)"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1255,7 +1255,7 @@
           }
         },
         {
-          "name" : "xQDevice.qnp_tbl",
+          "name" : "xQControl.qnp_tbl",
           "id" : 4,
           "source_info" : {
             "filename" : "q-end-node.p4",
@@ -1278,11 +1278,11 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [8, 5],
-          "actions" : ["xQDevice.qnp_to_cpu", "xQDevice.qubit_release"],
+          "actions" : ["xQControl.qnp_to_cpu", "xQControl.qubit_release"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.qnp_to_cpu" : null,
-            "xQDevice.qubit_release" : null
+            "xQControl.qnp_to_cpu" : null,
+            "xQControl.qubit_release" : null
           },
           "default_entry" : {
             "action_id" : 5,
@@ -1292,7 +1292,7 @@
           }
         },
         {
-          "name" : "xQDevice.egp_tbl",
+          "name" : "xQControl.egp_tbl",
           "id" : 5,
           "source_info" : {
             "filename" : "q-end-node.p4",
@@ -1315,12 +1315,12 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [6, 7, 4],
-          "actions" : ["xQDevice.egp_to_qnp", "xQDevice.egp_to_cpu", "xQDevice.qubit_release"],
+          "actions" : ["xQControl.egp_to_qnp", "xQControl.egp_to_cpu", "xQControl.qubit_release"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.egp_to_qnp" : null,
-            "xQDevice.egp_to_cpu" : null,
-            "xQDevice.qubit_release" : null
+            "xQControl.egp_to_qnp" : null,
+            "xQControl.egp_to_cpu" : null,
+            "xQControl.qubit_release" : null
           },
           "default_entry" : {
             "action_id" : 4,
@@ -1339,7 +1339,7 @@
             "filename" : "q-end-node.p4",
             "line" : 179,
             "column" : 12,
-            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome"
+            "source_fragment" : "qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome"
           },
           "expression" : {
             "type" : "expression",
@@ -1347,7 +1347,7 @@
               "op" : "==",
               "left" : {
                 "type" : "field",
-                "value" : ["qdevice_metadata", "event_type"]
+                "value" : ["qcontrol_metadata", "event_type"]
               },
               "right" : {
                 "type" : "hexstr",
@@ -1378,7 +1378,7 @@
               }
             }
           },
-          "true_next" : "xQDevice.qnp_tbl",
+          "true_next" : "xQControl.qnp_tbl",
           "false_next" : "node_12"
         },
         {
@@ -1402,7 +1402,7 @@
             }
           },
           "false_next" : null,
-          "true_next" : "xQDevice.egp_tbl"
+          "true_next" : "xQControl.egp_tbl"
         }
       ]
     },

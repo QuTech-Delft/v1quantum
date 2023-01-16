@@ -523,10 +523,10 @@ class Controller(NodeProtocol):
             node=node,
             rule_id=self.__assign_rule_id(),
             rule_action=RuleAction.INSERT_TABLE_ENTRY,
-            block="qdevice",
-            table="xQDevice.egp_tbl",
+            block="qcontrol",
+            table="xQControl.egp_tbl",
             key=label,
-            action_name="xQDevice.egp_to_qnp",
+            action_name="xQControl.egp_to_qnp",
             action_data=[cid, int(head_end), self.__ethaddr[remote]],
         )
         self.node.ports[node].tx_output(message)
@@ -538,10 +538,10 @@ class Controller(NodeProtocol):
             node=node,
             rule_id=self.__assign_rule_id(),
             rule_action=RuleAction.INSERT_TABLE_ENTRY,
-            block="qdevice",
-            table="xQDevice.qnp_tbl",
+            block="qcontrol",
+            table="xQControl.qnp_tbl",
             key=cid,
-            action_name="xQDevice.qnp_to_cpu",
+            action_name="xQControl.qnp_to_cpu",
             action_data=[int(head_end)],
         )
         self.node.ports[node].tx_output(message)
@@ -581,10 +581,10 @@ class Controller(NodeProtocol):
             node=node,
             rule_id=self.__assign_rule_id(),
             rule_action=RuleAction.INSERT_TABLE_ENTRY,
-            block="qdevice",
-            table="xQDevice.bsm_tbl",
+            block="qcontrol",
+            table="xQControl.bsm_tbl",
             key=[bsm_grp_id, int(True)],
-            action_name="xQDevice.bsm_to_egp",
+            action_name="xQControl.bsm_to_egp",
             action_data=[label],
         )
         self.node.ports[node].tx_output(message)
@@ -627,10 +627,10 @@ class Controller(NodeProtocol):
                 node=node,
                 rule_id=self.__assign_rule_id(),
                 rule_action=RuleAction.INSERT_TABLE_ENTRY,
-                block="qdevice",
-                table="xQDevice.egp_tbl",
+                block="qcontrol",
+                table="xQControl.egp_tbl",
                 key=[port, lbl],
-                action_name="xQDevice.egp_to_qnp",
+                action_name="xQControl.egp_to_qnp",
                 action_data=[cid, other_port, other_lbl],
             )
             self.node.ports[node].tx_output(message)
@@ -642,10 +642,10 @@ class Controller(NodeProtocol):
                 node=node,
                 rule_id=self.__assign_rule_id(),
                 rule_action=RuleAction.INSERT_TABLE_ENTRY,
-                block="qdevice",
-                table="xQDevice.qnp_tbl",
+                block="qcontrol",
+                table="xQControl.qnp_tbl",
                 key=[port, cid],
-                action_name="xQDevice.qnp_forward",
+                action_name="xQControl.qnp_forward",
                 action_data=[other_port],
             )
             self.node.ports[node].tx_output(message)

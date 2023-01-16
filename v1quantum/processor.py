@@ -46,16 +46,16 @@ class V1QuantumProcessor(Processor):
         self.__bsm_groups = {}
 
     @property
-    def QDeviceEventType(self):
-        """Return the QDeviceEventType enum dict."""
+    def QControlEventType(self):
+        """Return the QControlEventType enum dict."""
         # pylint:disable=invalid-name
-        return self._process.enums["QDeviceEventType"]
+        return self._process.enums["QControlEventType"]
 
     @property
-    def QDeviceOperation(self):
-        """Return the QDeviceOperation enum dict."""
+    def QControlOperation(self):
+        """Return the QControlOperation enum dict."""
         # pylint:disable=invalid-name
-        return self._process.enums["QDeviceOperation"]
+        return self._process.enums["QControlOperation"]
 
     @property
     def PathWay(self):
@@ -72,8 +72,8 @@ class V1QuantumProcessor(Processor):
         return self._process.blocks["ingress"]
 
     @property
-    def __qdevice(self):
-        return self._process.blocks["qdevice"]
+    def __qcontrol(self):
+        return self._process.blocks["qcontrol"]
 
     @property
     def __egress(self):
@@ -90,7 +90,7 @@ class V1QuantumProcessor(Processor):
 
     def __initialise_metadata(self, bus, port_in_meta):
         standard_metadata = bus.metadata["standard_metadata"]
-        qdevice_metadata = bus.metadata["qdevice_metadata"]
+        qcontrol_metadata = bus.metadata["qcontrol_metadata"]
         xconnect_metadata = bus.metadata["xconnect_metadata"]
 
         # Check the provided standard_metadata.
@@ -105,28 +105,28 @@ class V1QuantumProcessor(Processor):
         # Initialise certain fields to architecture-specific values.
         standard_metadata["egress_spec"].set_max_val()
 
-        # Check the provided qdevice_metadata.
-        if port_in_meta.pathway == self.PathWay["qdevice"]:
+        # Check the provided qcontrol_metadata.
+        if port_in_meta.pathway == self.PathWay["qcontrol"]:
             V1QuantumProcessor.__check_field(
-                "event_type", port_in_meta.qdevice_metadata, "qdevice_metadata")
-            event_type = qdevice_metadata["event_type"].val
-            if event_type in (self.QDeviceEventType["heralding_bsm_outcome"],
-                              self.QDeviceEventType["swap_bsm_outcome"]):
+                "event_type", port_in_meta.qcontrol_metadata, "qcontrol_metadata")
+            event_type = qcontrol_metadata["event_type"].val
+            if event_type in (self.QControlEventType["heralding_bsm_outcome"],
+                              self.QControlEventType["swap_bsm_outcome"]):
                 V1QuantumProcessor.__check_field(
-                    "bsm_id", port_in_meta.qdevice_metadata, "qdevice_metadata")
+                    "bsm_id", port_in_meta.qcontrol_metadata, "qcontrol_metadata")
                 V1QuantumProcessor.__check_field(
-                    "bsm_success", port_in_meta.qdevice_metadata, "qdevice_metadata")
+                    "bsm_success", port_in_meta.qcontrol_metadata, "qcontrol_metadata")
                 V1QuantumProcessor.__check_field(
-                    "bsm_bell_index", port_in_meta.qdevice_metadata, "qdevice_metadata")
+                    "bsm_bell_index", port_in_meta.qcontrol_metadata, "qcontrol_metadata")
 
-        # Copy over the input qdevice_metadata.
-        for field, value in port_in_meta.qdevice_metadata.items():
-            qdevice_metadata[field].val = value
+        # Copy over the input qcontrol_metadata.
+        for field, value in port_in_meta.qcontrol_metadata.items():
+            qcontrol_metadata[field].val = value
 
         # Initialise certain fields to architecture-specific values.
         if port_in_meta.pathway == self.PathWay["cnetwork"]:
-            qdevice_metadata["event_type"].val = self.QDeviceEventType["cnetwork"]
-        qdevice_metadata["operation"].val = self.QDeviceOperation["none"]
+            qcontrol_metadata["event_type"].val = self.QControlEventType["cnetwork"]
+        qcontrol_metadata["operation"].val = self.QControlOperation["none"]
 
         # Xconnect metadata is not provided by the user. We initialise its values.
         xconnect_metadata["pathway"].val = port_in_meta.pathway
@@ -138,13 +138,13 @@ class V1QuantumProcessor(Processor):
     def __traffic_manager(self, bus):
         bus_list = []
 
-        # We look at pathway as QDevice is not supposed to be setting it.
+        # We look at pathway as QControl is not supposed to be setting it.
         if bus.metadata["xconnect_metadata"]["pathway"].val == self.PathWay["cnetwork"]:
             if not bus.metadata["standard_metadata"]["egress_spec"].is_max_val():
                 bus_list.append(bus)
 
         else:
-            assert bus.metadata["xconnect_metadata"]["pathway"].val == self.PathWay["qdevice"]
+            assert bus.metadata["xconnect_metadata"]["pathway"].val == self.PathWay["qcontrol"]
 
             if not bus.metadata["xconnect_metadata"]["egress_spec"].is_max_val():
                 eg_bus = bus.clone()
@@ -187,9 +187,9 @@ class V1QuantumProcessor(Processor):
         port_packet_out = []
         for bus, packet in bus_packet_out_list:
             port_out_meta = V1QuantumPortMeta(
-                pathway=self.PathWay["qdevice"] if packet is None else self.PathWay["cnetwork"],
+                pathway=self.PathWay["qcontrol"] if packet is None else self.PathWay["cnetwork"],
                 standard_metadata=bus.metadata["standard_metadata"].as_dict(),
-                qdevice_metadata=bus.metadata["qdevice_metadata"].as_dict(),
+                qcontrol_metadata=bus.metadata["qcontrol_metadata"].as_dict(),
             )
             port_packet_out.append((port_out_meta, packet))
 
@@ -249,7 +249,7 @@ class V1QuantumProcessor(Processor):
 
         # ------------------------------------------------------------------------------------------
         # From the metadata we infer whether this packet should go through the CNetwork parser or
-        # directly enter the QDevice cross connect.
+        # directly enter the QControl cross connect.
         # ------------------------------------------------------------------------------------------
 
         if port_in_meta.pathway == self.PathWay["cnetwork"]:
@@ -268,8 +268,8 @@ class V1QuantumProcessor(Processor):
                 int(self._runtime.time())
             self.__ingress.process(bus)
 
-            # In case the ingress has redirected the bus to the qdevice we indicate this.
-            bus.metadata["qdevice_metadata"]["event_type"].val = self.QDeviceEventType["cnetwork"]
+            # In case the ingress has redirected the bus to the qcontrol we indicate this.
+            bus.metadata["qcontrol_metadata"]["event_type"].val = self.QControlEventType["cnetwork"]
 
         # ------------------------------------------------------------------------------------------
         # We enter the cross connect if the pathway in cross connect metadata indicates so. Note
@@ -277,15 +277,15 @@ class V1QuantumProcessor(Processor):
         # initialising metadata.
         # ------------------------------------------------------------------------------------------
 
-        if bus.metadata["xconnect_metadata"]["pathway"].val == self.PathWay["qdevice"]:
-            # Make sure QDeviceOperation is set to none.
-            bus.metadata["qdevice_metadata"]["operation"].val = self.QDeviceOperation["none"]
+        if bus.metadata["xconnect_metadata"]["pathway"].val == self.PathWay["qcontrol"]:
+            # Make sure QControlOperation is set to none.
+            bus.metadata["qcontrol_metadata"]["operation"].val = self.QControlOperation["none"]
 
             # --------------------------------------------------------------------------------------
-            # QDevice Cross Connect
+            # QControl Cross Connect
             # --------------------------------------------------------------------------------------
-            bus.metadata["qdevice_metadata"]["event_timestamp"].val = int(self._runtime.time())
-            self.__qdevice.process(bus)
+            bus.metadata["qcontrol_metadata"]["event_timestamp"].val = int(self._runtime.time())
+            self.__qcontrol.process(bus)
 
         # ------------------------------------------------------------------------------------------
         # Final egress processing.
@@ -293,7 +293,7 @@ class V1QuantumProcessor(Processor):
 
         bus_packet_out_list = []
 
-        if bus.metadata["qdevice_metadata"]["operation"].val != self.QDeviceOperation["none"]:
+        if bus.metadata["qcontrol_metadata"]["operation"].val != self.QControlOperation["none"]:
             bus_packet_out_list.append((bus.clone(), None))
 
         # ------------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ class V1QuantumPortMeta:
 
     pathway: int
     standard_metadata: dict
-    qdevice_metadata: dict
+    qcontrol_metadata: dict
 
 
 class V1QuantumRuntimeAbc(V1ModelRuntimeAbc):
@@ -395,5 +395,5 @@ class V1QuantumProcess(Process):
     @staticmethod
     def _validate_program(program):
         Process._validate_program_pipeline(
-            program, ["parser"], ["ingress", "qdevice", "egress"], ["deparser"],
+            program, ["parser"], ["ingress", "qcontrol", "egress"], ["deparser"],
         )

@@ -147,7 +147,7 @@
       ]
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 9,
       "fields" : [
         ["event_type", 32, false],
@@ -238,9 +238,9 @@
       "pi_omit" : true
     },
     {
-      "name" : "qdevice_metadata",
+      "name" : "qcontrol_metadata",
       "id" : 9,
-      "header_type" : "qdevice_metadata",
+      "header_type" : "qcontrol_metadata",
       "metadata" : true,
       "pi_omit" : true
     },
@@ -335,11 +335,11 @@
       "name" : "PathWay",
       "entries" : [
         ["cnetwork", 0],
-        ["qdevice", 1]
+        ["qcontrol", 1]
       ]
     },
     {
-      "name" : "QDeviceOperation",
+      "name" : "QControlOperation",
       "entries" : [
         ["none", 0],
         ["release", 2],
@@ -347,7 +347,7 @@
       ]
     },
     {
-      "name" : "QDeviceEventType",
+      "name" : "QControlEventType",
       "entries" : [
         ["cnetwork", 2],
         ["heralding_bsm_outcome", 0],
@@ -481,7 +481,7 @@
   "counter_arrays" : [],
   "register_arrays" : [
     {
-      "name" : "xQDevice.r_qnp_vc_state_swap_seq",
+      "name" : "xQControl.r_qnp_vc_state_swap_seq",
       "id" : 0,
       "source_info" : {
         "filename" : "q-int-node.p4",
@@ -726,7 +726,7 @@
             "filename" : "q-int-node.p4",
             "line" : 122,
             "column" : 12,
-            "source_fragment" : "xconnect_metadata.pathway = PathWay.qdevice"
+            "source_fragment" : "xconnect_metadata.pathway = PathWay.qcontrol"
           }
         }
       ]
@@ -807,7 +807,7 @@
       ]
     },
     {
-      "name" : "xQDevice.egp_read",
+      "name" : "xQControl.egp_read",
       "id" : 4,
       "runtime_data" : [],
       "primitives" : [
@@ -979,7 +979,7 @@
       ]
     },
     {
-      "name" : "xQDevice.egp_write",
+      "name" : "xQControl.egp_write",
       "id" : 5,
       "runtime_data" : [],
       "primitives" : [
@@ -1151,7 +1151,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qubit_release",
+      "name" : "xQControl.qubit_release",
       "id" : 6,
       "runtime_data" : [],
       "primitives" : [
@@ -1160,7 +1160,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "operation"]
+              "value" : ["qcontrol_metadata", "operation"]
             },
             {
               "type" : "hexstr",
@@ -1171,7 +1171,7 @@
             "filename" : "q-int-node.p4",
             "line" : 173,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+            "source_fragment" : "qcontrol_metadata.operation = QControlOperation.release"
           }
         },
         {
@@ -1179,7 +1179,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "release_qubit"]
+              "value" : ["qcontrol_metadata", "release_qubit"]
             },
             {
               "type" : "field",
@@ -1190,13 +1190,13 @@
             "filename" : "q-int-node.p4",
             "line" : 174,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.release_qubit = xconnect_metadata.ingress_port"
+            "source_fragment" : "qcontrol_metadata.release_qubit = xconnect_metadata.ingress_port"
           }
         }
       ]
     },
     {
-      "name" : "xQDevice.qubit_release",
+      "name" : "xQControl.qubit_release",
       "id" : 7,
       "runtime_data" : [],
       "primitives" : [
@@ -1205,7 +1205,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "operation"]
+              "value" : ["qcontrol_metadata", "operation"]
             },
             {
               "type" : "hexstr",
@@ -1216,7 +1216,7 @@
             "filename" : "q-int-node.p4",
             "line" : 173,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.release"
+            "source_fragment" : "qcontrol_metadata.operation = QControlOperation.release"
           }
         },
         {
@@ -1224,7 +1224,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "release_qubit"]
+              "value" : ["qcontrol_metadata", "release_qubit"]
             },
             {
               "type" : "field",
@@ -1235,13 +1235,13 @@
             "filename" : "q-int-node.p4",
             "line" : 174,
             "column" : 8,
-            "source_fragment" : "qdevice_metadata.release_qubit = xconnect_metadata.ingress_port"
+            "source_fragment" : "qcontrol_metadata.release_qubit = xconnect_metadata.ingress_port"
           }
         }
       ]
     },
     {
-      "name" : "xQDevice.egp_to_qnp",
+      "name" : "xQControl.egp_to_qnp",
       "id" : 8,
       "runtime_data" : [
         {
@@ -1318,7 +1318,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qnp_swap_to_track",
+      "name" : "xQControl.qnp_swap_to_track",
       "id" : 9,
       "runtime_data" : [],
       "primitives" : [
@@ -1337,7 +1337,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "swap_bsm_id"]
+                    "value" : ["qcontrol_metadata", "swap_bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -1351,7 +1351,7 @@
             "filename" : "q-int-node.p4",
             "line" : 197,
             "column" : 26,
-            "source_fragment" : "(bit<32>)qdevice_metadata.swap_bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.swap_bsm_id"
           }
         },
         {
@@ -1363,7 +1363,7 @@
             },
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_qnp_vc_state_swap_seq"
+              "value" : "xQControl.r_qnp_vc_state_swap_seq"
             },
             {
               "type" : "field",
@@ -1397,11 +1397,11 @@
                       "op" : "==",
                       "left" : {
                         "type" : "field",
-                        "value" : ["qdevice_metadata", "swap_bsm_id"]
+                        "value" : ["qcontrol_metadata", "swap_bsm_id"]
                       },
                       "right" : {
                         "type" : "field",
-                        "value" : ["qdevice_metadata", "bsm_id"]
+                        "value" : ["qcontrol_metadata", "bsm_id"]
                       }
                     }
                   }
@@ -1413,7 +1413,7 @@
             "filename" : "q-int-node.p4",
             "line" : 200,
             "column" : 15,
-            "source_fragment" : "qdevice_metadata.swap_bsm_id == qdevice_metadata.bsm_id"
+            "source_fragment" : "qcontrol_metadata.swap_bsm_id == qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -1445,7 +1445,7 @@
             "filename" : "q-int-node.p4",
             "line" : 200,
             "column" : 8,
-            "source_fragment" : "assert(qdevice_metadata.swap_bsm_id == qdevice_metadata.bsm_id)"
+            "source_fragment" : "assert(qcontrol_metadata.swap_bsm_id == qcontrol_metadata.bsm_id)"
           }
         },
         {
@@ -1472,14 +1472,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_id"]
+              "value" : ["qcontrol_metadata", "bsm_id"]
             }
           ],
           "source_info" : {
             "filename" : "q-int-node.p4",
             "line" : 202,
             "column" : 8,
-            "source_fragment" : "hdr.swap_info.bsm_id = qdevice_metadata.bsm_id"
+            "source_fragment" : "hdr.swap_info.bsm_id = qcontrol_metadata.bsm_id"
           }
         },
         {
@@ -1524,7 +1524,7 @@
                   },
                   "cond" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "bsm_success"]
+                    "value" : ["qcontrol_metadata", "bsm_success"]
                   }
                 }
               }
@@ -1546,14 +1546,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "bsm_bell_index"]
+              "value" : ["qcontrol_metadata", "bsm_bell_index"]
             }
           ],
           "source_info" : {
             "filename" : "q-int-node.p4",
             "line" : 205,
             "column" : 8,
-            "source_fragment" : "hdr.swap_info.bell_index = qdevice_metadata.bsm_bell_index"
+            "source_fragment" : "hdr.swap_info.bell_index = qcontrol_metadata.bsm_bell_index"
           }
         },
         {
@@ -1626,14 +1626,14 @@
             },
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "swap_bsm_id"]
+              "value" : ["qcontrol_metadata", "swap_bsm_id"]
             }
           ],
           "source_info" : {
             "filename" : "q-int-node.p4",
             "line" : 211,
             "column" : 8,
-            "source_fragment" : "xconnect_metadata.bsm_grp = qdevice_metadata.swap_bsm_id"
+            "source_fragment" : "xconnect_metadata.bsm_grp = qcontrol_metadata.swap_bsm_id"
           }
         },
         {
@@ -1651,7 +1651,7 @@
                   "op" : "&",
                   "left" : {
                     "type" : "field",
-                    "value" : ["qdevice_metadata", "swap_bsm_id"]
+                    "value" : ["qcontrol_metadata", "swap_bsm_id"]
                   },
                   "right" : {
                     "type" : "hexstr",
@@ -1665,7 +1665,7 @@
             "filename" : "q-int-node.p4",
             "line" : 214,
             "column" : 27,
-            "source_fragment" : "(bit<32>)qdevice_metadata.swap_bsm_id"
+            "source_fragment" : "(bit<32>)qcontrol_metadata.swap_bsm_id"
           }
         },
         {
@@ -1673,7 +1673,7 @@
           "parameters" : [
             {
               "type" : "register_array",
-              "value" : "xQDevice.r_qnp_vc_state_swap_seq"
+              "value" : "xQControl.r_qnp_vc_state_swap_seq"
             },
             {
               "type" : "field",
@@ -1694,7 +1694,7 @@
       ]
     },
     {
-      "name" : "xQDevice.qnp_forward",
+      "name" : "xQControl.qnp_forward",
       "id" : 10,
       "runtime_data" : [
         {
@@ -1905,7 +1905,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "operation"]
+              "value" : ["qcontrol_metadata", "operation"]
             },
             {
               "type" : "hexstr",
@@ -1916,7 +1916,7 @@
             "filename" : "q-int-node.p4",
             "line" : 264,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.operation = QDeviceOperation.swap"
+            "source_fragment" : "qcontrol_metadata.operation = QControlOperation.swap"
           }
         },
         {
@@ -1924,7 +1924,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "swap_bsm_id"]
+              "value" : ["qcontrol_metadata", "swap_bsm_id"]
             },
             {
               "type" : "field",
@@ -1935,7 +1935,7 @@
             "filename" : "q-int-node.p4",
             "line" : 265,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.swap_bsm_id = egp_link_swap_info.circuit_id"
+            "source_fragment" : "qcontrol_metadata.swap_bsm_id = egp_link_swap_info.circuit_id"
           }
         },
         {
@@ -1943,7 +1943,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "swap_qubit_0"]
+              "value" : ["qcontrol_metadata", "swap_qubit_0"]
             },
             {
               "type" : "field",
@@ -1954,7 +1954,7 @@
             "filename" : "q-int-node.p4",
             "line" : 266,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.swap_qubit_0 = xconnect_metadata.ingress_port"
+            "source_fragment" : "qcontrol_metadata.swap_qubit_0 = xconnect_metadata.ingress_port"
           }
         },
         {
@@ -1962,7 +1962,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["qdevice_metadata", "swap_qubit_1"]
+              "value" : ["qcontrol_metadata", "swap_qubit_1"]
             },
             {
               "type" : "field",
@@ -1973,7 +1973,7 @@
             "filename" : "q-int-node.p4",
             "line" : 267,
             "column" : 32,
-            "source_fragment" : "qdevice_metadata.swap_qubit_1 = egp_link_swap_info.other_port"
+            "source_fragment" : "qcontrol_metadata.swap_qubit_1 = egp_link_swap_info.other_port"
           }
         }
       ]
@@ -5663,13 +5663,13 @@
       ]
     },
     {
-      "name" : "qdevice",
+      "name" : "qcontrol",
       "id" : 1,
       "source_info" : {
         "filename" : "q-int-node.p4",
         "line" : 139,
         "column" : 8,
-        "source_fragment" : "xQDevice"
+        "source_fragment" : "xQControl"
       },
       "init_table" : "tbl_qintnode145",
       "tables" : [
@@ -5720,9 +5720,9 @@
           "direct_meters" : null,
           "action_ids" : [12],
           "actions" : ["qintnode277"],
-          "base_default_next" : "xQDevice.qnp_tbl",
+          "base_default_next" : "xQControl.qnp_tbl",
           "next_tables" : {
-            "qintnode277" : "xQDevice.qnp_tbl"
+            "qintnode277" : "xQControl.qnp_tbl"
           },
           "default_entry" : {
             "action_id" : 12,
@@ -5732,7 +5732,7 @@
           }
         },
         {
-          "name" : "xQDevice.qnp_tbl",
+          "name" : "xQControl.qnp_tbl",
           "id" : 5,
           "source_info" : {
             "filename" : "q-int-node.p4",
@@ -5761,11 +5761,11 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [10, 7],
-          "actions" : ["xQDevice.qnp_forward", "xQDevice.qubit_release"],
+          "actions" : ["xQControl.qnp_forward", "xQControl.qubit_release"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.qnp_forward" : "tbl_qintnode281",
-            "xQDevice.qubit_release" : null
+            "xQControl.qnp_forward" : "tbl_qintnode281",
+            "xQControl.qubit_release" : null
           },
           "default_entry" : {
             "action_id" : 7,
@@ -5821,9 +5821,9 @@
           "direct_meters" : null,
           "action_ids" : [16],
           "actions" : ["qintnode236"],
-          "base_default_next" : "xQDevice.egp_tbl",
+          "base_default_next" : "xQControl.egp_tbl",
           "next_tables" : {
-            "qintnode236" : "xQDevice.egp_tbl"
+            "qintnode236" : "xQControl.egp_tbl"
           },
           "default_entry" : {
             "action_id" : 16,
@@ -5833,7 +5833,7 @@
           }
         },
         {
-          "name" : "xQDevice.egp_tbl",
+          "name" : "xQControl.egp_tbl",
           "id" : 8,
           "source_info" : {
             "filename" : "q-int-node.p4",
@@ -5862,11 +5862,11 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [8, 6],
-          "actions" : ["xQDevice.egp_to_qnp", "xQDevice.qubit_release"],
+          "actions" : ["xQControl.egp_to_qnp", "xQControl.qubit_release"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.egp_to_qnp" : "tbl_qintnode245",
-            "xQDevice.qubit_release" : null
+            "xQControl.egp_to_qnp" : "tbl_qintnode245",
+            "xQControl.qubit_release" : null
           },
           "default_entry" : {
             "action_id" : 6,
@@ -5921,10 +5921,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [5],
-          "actions" : ["xQDevice.egp_write"],
+          "actions" : ["xQControl.egp_write"],
           "base_default_next" : "tbl_qintnode255",
           "next_tables" : {
-            "xQDevice.egp_write" : "tbl_qintnode255"
+            "xQControl.egp_write" : "tbl_qintnode255"
           },
           "default_entry" : {
             "action_id" : 5,
@@ -5979,10 +5979,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [4],
-          "actions" : ["xQDevice.egp_read"],
+          "actions" : ["xQControl.egp_read"],
           "base_default_next" : "node_21",
           "next_tables" : {
-            "xQDevice.egp_read" : "node_21"
+            "xQControl.egp_read" : "node_21"
           },
           "default_entry" : {
             "action_id" : 4,
@@ -5997,8 +5997,8 @@
           "source_info" : {
             "filename" : "q-int-node.p4",
             "line" : 264,
-            "column" : 59,
-            "source_fragment" : "= QDeviceOperation.swap; ..."
+            "column" : 60,
+            "source_fragment" : "= QControlOperation.swap; ..."
           },
           "key" : [],
           "match_type" : "exact",
@@ -6037,10 +6037,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [9],
-          "actions" : ["xQDevice.qnp_swap_to_track"],
+          "actions" : ["xQControl.qnp_swap_to_track"],
           "base_default_next" : null,
           "next_tables" : {
-            "xQDevice.qnp_swap_to_track" : null
+            "xQControl.qnp_swap_to_track" : null
           },
           "default_entry" : {
             "action_id" : 9,
@@ -6059,7 +6059,7 @@
             "filename" : "q-int-node.p4",
             "line" : 234,
             "column" : 12,
-            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.cnetwork"
+            "source_fragment" : "qcontrol_metadata.event_type == QControlEventType.cnetwork"
           },
           "expression" : {
             "type" : "expression",
@@ -6067,7 +6067,7 @@
               "op" : "==",
               "left" : {
                 "type" : "field",
-                "value" : ["qdevice_metadata", "event_type"]
+                "value" : ["qcontrol_metadata", "event_type"]
               },
               "right" : {
                 "type" : "hexstr",
@@ -6160,7 +6160,7 @@
             "filename" : "q-int-node.p4",
             "line" : 285,
             "column" : 19,
-            "source_fragment" : "qdevice_metadata.event_type == QDeviceEventType.swap_bsm_outcome"
+            "source_fragment" : "qcontrol_metadata.event_type == QControlEventType.swap_bsm_outcome"
           },
           "expression" : {
             "type" : "expression",
@@ -6168,7 +6168,7 @@
               "op" : "==",
               "left" : {
                 "type" : "field",
-                "value" : ["qdevice_metadata", "event_type"]
+                "value" : ["qcontrol_metadata", "event_type"]
               },
               "right" : {
                 "type" : "hexstr",

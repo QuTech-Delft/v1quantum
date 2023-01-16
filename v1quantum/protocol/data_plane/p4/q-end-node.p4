@@ -96,7 +96,7 @@ control xIngress(
 
     apply {
         if (hdr.egp.isValid()) {
-            xconnect_metadata.pathway = PathWay.qdevice;
+            xconnect_metadata.pathway = PathWay.qcontrol;
         } else {
             assert(hdr.ethernet.isValid());
             ethernet_tbl.apply();
@@ -108,15 +108,15 @@ control xIngress(
 ***************  Q D E V I C E   P R O C E S S I N G   ******************
 *************************************************************************/
 
-control xQDevice(
+control xQControl(
     inout headers hdr,
     inout metadata meta,
-    inout qdevice_metadata_t qdevice_metadata,
+    inout qcontrol_metadata_t qcontrol_metadata,
     inout xconnect_metadata_t xconnect_metadata
 ) {
     action qubit_release() {
-        qdevice_metadata.operation = QDeviceOperation.release;
-        qdevice_metadata.release_qubit = PORT_END_NODE;
+        qcontrol_metadata.operation = QControlOperation.release;
+        qcontrol_metadata.release_qubit = PORT_END_NODE;
     }
 
     action egp_to_qnp(bit<16> circuit_id, bit<1> head_end, bit<48> next_mac_addr) {
@@ -176,10 +176,10 @@ control xQDevice(
     }
 
     apply {
-        if (qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome) {
+        if (qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome) {
             // TODO: will eventually hold measurement outcome for measure directly.
         } else {
-            assert(qdevice_metadata.event_type == QDeviceEventType.cnetwork);
+            assert(qcontrol_metadata.event_type == QControlEventType.cnetwork);
 
             if (hdr.qnp.isValid()) {
                 qnp_tbl.apply();
@@ -231,7 +231,7 @@ V1Quantum(
     xParser(),
     xVerifyChecksum(),
     xIngress(),
-    xQDevice(),
+    xQControl(),
     xEgress(),
     xComputeChecksum(),
     xDeparser()

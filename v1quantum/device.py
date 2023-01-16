@@ -88,24 +88,24 @@ class V1QuantumDevice(P4Device):
         port_meta = V1QuantumPortMeta(
             pathway=self._p4_processor.PathWay["cnetwork"],
             standard_metadata={"ingress_port": port_index},
-            qdevice_metadata={},
+            qcontrol_metadata={},
         )
         port_packets = self._p4_processor.input(port_meta, packet)
         self.__execute(port_packets)
 
-    def qdevice_process(self, qdevice_metadata):
-        """Process an incoming QDevice event.
+    def qdevice_process(self, qcontrol_metadata):
+        """Process an incoming QControl event.
 
         Parameters
         ----------
-        qdevice_metadata : dict
-            QDevice metadata as a dict.
+        qcontrol_metadata : dict
+            QControl metadata as a dict.
 
         """
         port_meta = V1QuantumPortMeta(
-            pathway=self._p4_processor.PathWay["qdevice"],
+            pathway=self._p4_processor.PathWay["qcontrol"],
             standard_metadata={},
-            qdevice_metadata=qdevice_metadata,
+            qcontrol_metadata=qcontrol_metadata,
         )
         port_packets = self._p4_processor.input(port_meta, None)
         self.__execute(port_packets)
@@ -115,17 +115,17 @@ class V1QuantumDevice(P4Device):
             if port_meta.pathway == self._p4_processor.PathWay["cnetwork"]:
                 self._cnetwork_execute(port_meta.standard_metadata["egress_port"], packet)
             else:
-                assert port_meta.pathway == self._p4_processor.PathWay["qdevice"]
+                assert port_meta.pathway == self._p4_processor.PathWay["qcontrol"]
                 assert packet is None
-                self._qdevice_execute(port_meta.qdevice_metadata)
+                self._qdevice_execute(port_meta.qcontrol_metadata)
 
-    def _qdevice_execute(self, qdevice_metadata):
-        """Execute the relevant QDevice processing from the received event.
+    def _qdevice_execute(self, qcontrol_metadata):
+        """Execute the relevant QControl processing from the received event.
 
         Parameters
         ----------
-        qdevice_metadata : dict
-            The QDevice metadata for the operation to execute.
+        qcontrol_metadata : dict
+            The QControl metadata for the operation to execute.
 
         """
         # The V1Quantum architecture won't output anything for operation "none".
@@ -169,13 +169,13 @@ class V1QuantumDevice(P4Device):
             The BSM outcome.
 
         """
-        qdevice_metadata = {
-            "event_type": self._p4_processor.QDeviceEventType["heralding_bsm_outcome"],
+        qcontrol_metadata = {
+            "event_type": self._p4_processor.QControlEventType["heralding_bsm_outcome"],
             "bsm_id": bsm_outcome.bsm_id,
             "bsm_success": int(bsm_outcome.success),
             "bsm_bell_index": int(bsm_outcome.bell_index) if bsm_outcome.success else 0,
         }
-        self.qdevice_process(qdevice_metadata)
+        self.qdevice_process(qcontrol_metadata)
 
     def swap_bsm_outcome(self, bsm_outcome, qubit_0, qubit_1):
         """Notify the processor of the swap outcome.
@@ -190,8 +190,8 @@ class V1QuantumDevice(P4Device):
             The second qubit that was involved in the swap.
 
         """
-        qdevice_metadata = {
-            "event_type": self._p4_processor.QDeviceEventType["swap_bsm_outcome"],
+        qcontrol_metadata = {
+            "event_type": self._p4_processor.QControlEventType["swap_bsm_outcome"],
             "swap_bsm_id": bsm_outcome.bsm_id,
             "swap_qubit_0": qubit_0,
             "swap_qubit_1": qubit_1,
@@ -199,7 +199,7 @@ class V1QuantumDevice(P4Device):
             "bsm_success": int(bsm_outcome.success),
             "bsm_bell_index": int(bsm_outcome.bell_index) if bsm_outcome.success else 0,
         }
-        self.qdevice_process(qdevice_metadata)
+        self.qdevice_process(qcontrol_metadata)
 
 
 class V1QuantumRuntime(V1QuantumRuntimeAbc, NetsquidRuntime):

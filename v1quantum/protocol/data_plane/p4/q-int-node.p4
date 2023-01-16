@@ -119,7 +119,7 @@ control xIngress(
 
     apply {
         if (hdr.egp.isValid() || hdr.qnp.isValid()) {
-            xconnect_metadata.pathway = PathWay.qdevice;
+            xconnect_metadata.pathway = PathWay.qcontrol;
         } else {
             assert(hdr.ethernet.isValid());
             ethernet_tbl.apply();
@@ -136,10 +136,10 @@ register<bit<16>>(PORTS_MAX) r_egp_link_label;
 register<bit<16>>(PORTS_MAX) r_egp_pair_seq;
 register<bit<2>>(PORTS_MAX) r_egp_bell_index;
 
-control xQDevice(
+control xQControl(
     inout headers hdr,
     inout metadata meta,
-    inout qdevice_metadata_t qdevice_metadata,
+    inout qcontrol_metadata_t qcontrol_metadata,
     inout xconnect_metadata_t xconnect_metadata
 ) {
     egp_t egp_state;
@@ -170,8 +170,8 @@ control xQDevice(
     }
 
     action qubit_release() {
-        qdevice_metadata.operation = QDeviceOperation.release;
-        qdevice_metadata.release_qubit = xconnect_metadata.ingress_port;
+        qcontrol_metadata.operation = QControlOperation.release;
+        qcontrol_metadata.release_qubit = xconnect_metadata.ingress_port;
     }
 
     action egp_to_qnp(bit<16> circuit_id, bit<9> other_port, bit<16> other_label) {
@@ -194,24 +194,24 @@ control xQDevice(
 
     action qnp_swap_to_track() {
         // Load VC state.
-        qnp_vc_state_read((bit<32>)qdevice_metadata.swap_bsm_id);
+        qnp_vc_state_read((bit<32>)qcontrol_metadata.swap_bsm_id);
 
         // Fill out telemetry info.
-        assert(qdevice_metadata.swap_bsm_id == qdevice_metadata.bsm_id);
+        assert(qcontrol_metadata.swap_bsm_id == qcontrol_metadata.bsm_id);
         hdr.swap_info.setValid();
-        hdr.swap_info.bsm_id = qdevice_metadata.bsm_id;
+        hdr.swap_info.bsm_id = qcontrol_metadata.bsm_id;
         hdr.swap_info.outcome_seq = qnp_vc_state.swap_seq;
-        hdr.swap_info.success = (qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0);
-        hdr.swap_info.bell_index = qdevice_metadata.bsm_bell_index;
+        hdr.swap_info.success = (qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0);
+        hdr.swap_info.bell_index = qcontrol_metadata.bsm_bell_index;
         xconnect_metadata.egress_spec = PORT_CPU;
 
         qnp_vc_state.swap_seq = qnp_vc_state.swap_seq + 1;
 
         // BSM-cast the results.
-        xconnect_metadata.bsm_grp = qdevice_metadata.swap_bsm_id;
+        xconnect_metadata.bsm_grp = qcontrol_metadata.swap_bsm_id;
 
         // Write the VC state.
-        qnp_vc_state_write((bit<32>)qdevice_metadata.swap_bsm_id);
+        qnp_vc_state_write((bit<32>)qcontrol_metadata.swap_bsm_id);
     }
 
     action qnp_forward(bit<9> other_port) {
@@ -231,7 +231,7 @@ control xQDevice(
     }
 
     apply {
-        if (qdevice_metadata.event_type == QDeviceEventType.cnetwork) {
+        if (qcontrol_metadata.event_type == QControlEventType.cnetwork) {
             if (!hdr.qnp.isValid()) {
                 assert(hdr.egp.isValid());
 
@@ -261,10 +261,10 @@ control xQDevice(
                             // for our circuit.
                             if (egp_state.link_label == egp_link_swap_info.other_label) {
                                 // If it is we fill out the swap instruction.
-                                qdevice_metadata.operation = QDeviceOperation.swap;
-                                qdevice_metadata.swap_bsm_id = egp_link_swap_info.circuit_id;
-                                qdevice_metadata.swap_qubit_0 = xconnect_metadata.ingress_port;
-                                qdevice_metadata.swap_qubit_1 = egp_link_swap_info.other_port;
+                                qcontrol_metadata.operation = QControlOperation.swap;
+                                qcontrol_metadata.swap_bsm_id = egp_link_swap_info.circuit_id;
+                                qcontrol_metadata.swap_qubit_0 = xconnect_metadata.ingress_port;
+                                qcontrol_metadata.swap_qubit_1 = egp_link_swap_info.other_port;
                             }
 
                             // Otherwise, we wait. We have already stored our EGP information.
@@ -282,7 +282,7 @@ control xQDevice(
                     }
                 };
             }
-        } else if (qdevice_metadata.event_type == QDeviceEventType.swap_bsm_outcome) {
+        } else if (qcontrol_metadata.event_type == QControlEventType.swap_bsm_outcome) {
             qnp_swap_to_track();
         }
     }
@@ -505,7 +505,7 @@ V1Quantum(
     xParser(),
     xVerifyChecksum(),
     xIngress(),
-    xQDevice(),
+    xQControl(),
     xEgress(),
     xComputeChecksum(),
     xDeparser()

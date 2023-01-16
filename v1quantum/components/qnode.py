@@ -141,15 +141,15 @@ class QDevice(V1QuantumDevice):
         super().__init__(name, port_names=port_names)
         self.__node = node
 
-    def _qdevice_execute(self, qdevice_metadata):
-        if qdevice_metadata["operation"] == self._p4_processor.QDeviceOperation["release"]:
-            self.__node.qubit_discard(qdevice_metadata["release_qubit"])
+    def _qdevice_execute(self, qcontrol_metadata):
+        if qcontrol_metadata["operation"] == self._p4_processor.QControlOperation["release"]:
+            self.__node.qubit_discard(qcontrol_metadata["release_qubit"])
 
-        elif qdevice_metadata["operation"] == self._p4_processor.QDeviceOperation["swap"]:
+        elif qcontrol_metadata["operation"] == self._p4_processor.QControlOperation["swap"]:
             self.__node.execute_swap(
-                qdevice_metadata["swap_bsm_id"],
-                qdevice_metadata["swap_qubit_0"],
-                qdevice_metadata["swap_qubit_1"],
+                qcontrol_metadata["swap_bsm_id"],
+                qcontrol_metadata["swap_qubit_0"],
+                qcontrol_metadata["swap_qubit_1"],
             )
 
         else:

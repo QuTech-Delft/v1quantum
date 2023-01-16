@@ -91,10 +91,10 @@ control xIngress(
 *********  C R O S S - C O N N E C T   P R O C E S S I N G   ************
 *************************************************************************/
 
-control xQDevice(
+control xQControl(
     inout headers hdr,
     inout metadata meta,
-    inout qdevice_metadata_t qdevice_metadata,
+    inout qcontrol_metadata_t qcontrol_metadata,
     inout xconnect_metadata_t xconnect_metadata
 ) {
     bsm_grp_state_t bsm_grp_state;
@@ -116,19 +116,19 @@ control xQDevice(
         hdr.egp.setValid();
         hdr.egp.link_label = link_label;
         hdr.egp.pair_seq = bsm_grp_state.pair_seq;
-        hdr.egp.bell_index = qdevice_metadata.bsm_bell_index;
+        hdr.egp.bell_index = qcontrol_metadata.bsm_bell_index;
 
         // Increment pair_seq.
         bsm_grp_state.pair_seq = bsm_grp_state.pair_seq + 1;
 
         // BSM-cast to qnodes.
-        xconnect_metadata.bsm_grp = qdevice_metadata.bsm_id;
+        xconnect_metadata.bsm_grp = qcontrol_metadata.bsm_id;
     }
 
     table bsm_tbl {
         key = {
-            qdevice_metadata.bsm_id: exact;
-            qdevice_metadata.bsm_success: exact;
+            qcontrol_metadata.bsm_id: exact;
+            qcontrol_metadata.bsm_success: exact;
         }
         actions = {
             bsm_to_egp;
@@ -137,11 +137,11 @@ control xQDevice(
     }
 
     apply {
-        // Do not support any other QDevice event
-        assert(qdevice_metadata.event_type == QDeviceEventType.heralding_bsm_outcome);
+        // Do not support any other QControl event
+        assert(qcontrol_metadata.event_type == QControlEventType.heralding_bsm_outcome);
 
         // Read the BSM group state.
-        bsm_grp_state_read((bit<32>)qdevice_metadata.bsm_id);
+        bsm_grp_state_read((bit<32>)qcontrol_metadata.bsm_id);
 
         // We will be sending a telemetry packet to the CPU so set up ethernet header regardless.
         hdr.ethernet.setValid();
@@ -151,17 +151,17 @@ control xQDevice(
         bsm_tbl.apply();
 
         // Telemetry.
-        hdr.bsm_info.bsm_id = qdevice_metadata.bsm_id;
+        hdr.bsm_info.bsm_id = qcontrol_metadata.bsm_id;
         hdr.bsm_info.outcome_seq = bsm_grp_state.outcome_seq;
-        hdr.bsm_info.success = (qdevice_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0);
-        hdr.bsm_info.bell_index = qdevice_metadata.bsm_bell_index;
+        hdr.bsm_info.success = (qcontrol_metadata.bsm_success ? (bit<1>)1 : (bit<1>)0);
+        hdr.bsm_info.bell_index = qcontrol_metadata.bsm_bell_index;
         xconnect_metadata.egress_spec = PORT_CPU;
 
         // Increment outcome_seq.
         bsm_grp_state.outcome_seq = bsm_grp_state.outcome_seq + 1;
 
         // Write the BSM group state.
-        bsm_grp_state_write((bit<32>)qdevice_metadata.bsm_id);
+        bsm_grp_state_write((bit<32>)qcontrol_metadata.bsm_id);
     }
 }
 
@@ -237,7 +237,7 @@ V1Quantum(
     xParser(),
     xVerifyChecksum(),
     xIngress(),
-    xQDevice(),
+    xQControl(),
     xEgress(),
     xComputeChecksum(),
     xDeparser()
