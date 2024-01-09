@@ -1,6 +1,6 @@
-git+ssh://git@gitlab.tudelft.nl/qp4/netsquid-netrunner.git
-git+ssh://git@gitlab.tudelft.nl/qp4/pyp4.git
-git+ssh://git@gitlab.tudelft.nl/qp4/netsquid-p4.git
+git+ssh://git@gitlab.com:softwarequtech/netsquid-snippets/netsquid-netrunner.git
+git+ssh://git@github.com:QuTech-Delft/pyp4.git
+git+ssh://git@github.com:QuTech-Delft/netsquid-p4.git
 netsquid-physlayer
 networkx
 matplotlib
